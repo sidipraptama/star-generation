@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { Star } from "lucide-react";
+import { Logo } from "@/components/layout/logo";
 import { ActionForm } from "@/components/ui/action-form";
 import { Field, Input } from "@/components/ui/field";
 import { SubmitButton } from "@/components/ui/submit-button";
@@ -17,9 +17,9 @@ export default async function LoginPage() {
     <main className="grid min-h-screen place-items-center px-4 py-10">
       <div className="w-full max-w-sm">
         <div className="mb-8 flex flex-col items-center text-center">
-          <span className="bg-gold text-navy mb-3 grid size-14 place-items-center rounded-full">
-            <Star className="size-7" fill="currentColor" aria-hidden />
-          </span>
+          <div className="mb-3">
+            <Logo height={80} />
+          </div>
           <h1 className="text-2xl font-bold">Star Generation</h1>
           <p className="text-muted mt-1 text-sm">Sign in to manage your classes and lessons.</p>
         </div>

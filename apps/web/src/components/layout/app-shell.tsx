@@ -1,4 +1,5 @@
-import { LogOut, Star } from "lucide-react";
+import { LogOut } from "lucide-react";
+import { Logo } from "@/components/layout/logo";
 import { BottomTabs, SidebarLinks, type NavItem } from "@/components/layout/nav-links";
 import { signOut } from "@/app/login/actions";
 import type { Profile } from "@/lib/auth";
@@ -15,11 +16,9 @@ export function AppShell({ profile, nav, children }: AppShellProps) {
   return (
     <div className="min-h-screen md:flex">
       <aside className="bg-navy hidden w-64 shrink-0 flex-col p-4 text-white md:flex">
-        <div className="mb-8 flex items-center gap-2 px-2 pt-2">
-          <span className="bg-gold text-navy grid size-9 place-items-center rounded-full">
-            <Star className="size-5" fill="currentColor" aria-hidden />
-          </span>
-          <span className="text-lg font-bold">Star Generation</span>
+        <div className="mb-8 flex items-center gap-3 px-2 pt-2">
+          <Logo height={44} />
+          <span className="text-lg leading-tight font-bold">Star Generation</span>
         </div>
         <SidebarLinks items={nav} />
         <div className="mt-auto border-t border-white/15 pt-4">
@@ -40,7 +39,7 @@ export function AppShell({ profile, nav, children }: AppShellProps) {
       <div className="min-w-0 flex-1">
         <header className="bg-navy flex items-center justify-between px-4 py-3 text-white md:hidden">
           <span className="flex items-center gap-2 font-bold">
-            <Star className="text-gold size-5" fill="currentColor" aria-hidden />
+            <Logo height={28} />
             Star Generation
           </span>
           <form action={signOut}>
