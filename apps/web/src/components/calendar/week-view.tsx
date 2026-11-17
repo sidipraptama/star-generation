@@ -46,7 +46,7 @@ export function WeekView({ date, today, chips, chipHref, addHref }: WeekViewProp
   return (
     <div className="border-cloud rounded-card overflow-x-auto border bg-white">
       <div className="min-w-[760px]">
-        <div className={clsx("border-cloud grid border-b", COLUMNS)}>
+        <div className={clsx("grid", COLUMNS)}>
           <div />
           {days.map((day) => (
             <div key={day} className={clsx("px-2 py-2 text-center", day === today && "bg-gold/25")}>
