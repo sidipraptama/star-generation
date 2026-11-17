@@ -14,9 +14,9 @@ type AppShellProps = {
 export function AppShell({ profile, nav, children }: AppShellProps) {
   return (
     <div className="min-h-screen md:flex">
-      <aside className="hidden w-64 shrink-0 flex-col bg-navy p-4 text-white md:flex">
+      <aside className="bg-navy hidden w-64 shrink-0 flex-col p-4 text-white md:flex">
         <div className="mb-8 flex items-center gap-2 px-2 pt-2">
-          <span className="grid size-9 place-items-center rounded-full bg-gold text-navy">
+          <span className="bg-gold text-navy grid size-9 place-items-center rounded-full">
             <Star className="size-5" fill="currentColor" aria-hidden />
           </span>
           <span className="text-lg font-bold">Star Generation</span>
@@ -28,7 +28,7 @@ export function AppShell({ profile, nav, children }: AppShellProps) {
           <form action={signOut} className="mt-3">
             <button
               type="submit"
-              className="flex w-full items-center gap-3 rounded-card px-3 py-2.5 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white"
+              className="rounded-card flex w-full items-center gap-3 px-3 py-2.5 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white"
             >
               <LogOut className="size-5" aria-hidden />
               Sign out
@@ -38,13 +38,17 @@ export function AppShell({ profile, nav, children }: AppShellProps) {
       </aside>
 
       <div className="min-w-0 flex-1">
-        <header className="flex items-center justify-between bg-navy px-4 py-3 text-white md:hidden">
+        <header className="bg-navy flex items-center justify-between px-4 py-3 text-white md:hidden">
           <span className="flex items-center gap-2 font-bold">
-            <Star className="size-5 text-gold" fill="currentColor" aria-hidden />
+            <Star className="text-gold size-5" fill="currentColor" aria-hidden />
             Star Generation
           </span>
           <form action={signOut}>
-            <button type="submit" aria-label="Sign out" className="rounded-card p-2 hover:bg-white/10">
+            <button
+              type="submit"
+              aria-label="Sign out"
+              className="rounded-card p-2 hover:bg-white/10"
+            >
               <LogOut className="size-5" aria-hidden />
             </button>
           </form>

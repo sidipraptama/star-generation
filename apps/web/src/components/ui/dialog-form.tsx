@@ -53,18 +53,18 @@ export function DialogForm({
       <dialog
         ref={dialogRef}
         aria-label={title}
-        className="m-auto w-[calc(100%-2rem)] max-w-lg rounded-card border border-cloud bg-surface p-0 text-navy shadow-xl backdrop:bg-navy/40"
+        className="rounded-card border-cloud bg-surface text-navy backdrop:bg-navy/40 m-auto w-[calc(100%-2rem)] max-w-lg border p-0 shadow-xl"
       >
-        <div className="flex items-start justify-between gap-4 border-b border-cloud px-5 py-4">
+        <div className="border-cloud flex items-start justify-between gap-4 border-b px-5 py-4">
           <div>
             <h2 className="text-lg font-bold">{title}</h2>
-            {description && <p className="mt-0.5 text-sm text-muted">{description}</p>}
+            {description && <p className="text-muted mt-0.5 text-sm">{description}</p>}
           </div>
           <button
             type="button"
             onClick={close}
             aria-label="Close"
-            className="rounded-card p-1 text-muted hover:bg-navy/5 hover:text-navy"
+            className="rounded-card text-muted hover:bg-navy/5 hover:text-navy p-1"
           >
             <X className="size-5" aria-hidden />
           </button>

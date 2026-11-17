@@ -15,7 +15,7 @@ export function HoursMeter({ leftMinutes, purchasedMinutes }: HoursMeterProps) {
     <div>
       <div className="mb-1.5 flex items-baseline justify-between text-sm">
         <span className="font-semibold">{formatDuration(left)} left</span>
-        <span className="text-xs text-muted">of {formatDuration(purchasedMinutes)} bought</span>
+        <span className="text-muted text-xs">of {formatDuration(purchasedMinutes)} bought</span>
       </div>
       <div
         role="progressbar"
@@ -23,7 +23,7 @@ export function HoursMeter({ leftMinutes, purchasedMinutes }: HoursMeterProps) {
         aria-valuenow={Math.round(share)}
         aria-valuemin={0}
         aria-valuemax={100}
-        className="h-2 overflow-hidden rounded-full bg-cloud"
+        className="bg-cloud h-2 overflow-hidden rounded-full"
       >
         <div
           className={clsx("h-full rounded-full", low ? "bg-danger" : "bg-success")}

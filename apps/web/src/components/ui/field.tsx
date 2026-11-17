@@ -18,7 +18,7 @@ export function Field({ label, htmlFor, hint, className, children }: FieldProps)
         {label}
       </label>
       {children}
-      {hint && <p className="text-xs text-muted">{hint}</p>}
+      {hint && <p className="text-muted text-xs">{hint}</p>}
     </div>
   );
 }
@@ -32,7 +32,9 @@ export function Input({ className, id, name, ...props }: InputProps) {
 type SelectProps = React.SelectHTMLAttributes<HTMLSelectElement> & { name: string };
 
 export function Select({ className, id, name, ...props }: SelectProps) {
-  return <select id={id ?? name} name={name} className={clsx(controlClass, className)} {...props} />;
+  return (
+    <select id={id ?? name} name={name} className={clsx(controlClass, className)} {...props} />
+  );
 }
 
 type TextareaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement> & { name: string };

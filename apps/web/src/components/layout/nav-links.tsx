@@ -24,7 +24,7 @@ export function SidebarLinks({ items }: { items: NavItem[] }) {
             href={href}
             aria-current={active ? "page" : undefined}
             className={clsx(
-              "flex items-center gap-3 rounded-card px-3 py-2.5 text-sm font-semibold transition-colors",
+              "rounded-card flex items-center gap-3 px-3 py-2.5 text-sm font-semibold transition-colors",
               active ? "bg-gold text-navy" : "text-white/80 hover:bg-white/10 hover:text-white",
             )}
           >
@@ -43,7 +43,7 @@ export function BottomTabs({ items }: { items: NavItem[] }) {
   return (
     <nav
       aria-label="Main"
-      className="fixed inset-x-0 bottom-0 z-20 flex border-t border-cloud bg-white md:hidden"
+      className="border-cloud fixed inset-x-0 bottom-0 z-20 flex border-t bg-white md:hidden"
     >
       {items.map(({ href, label, icon, exact }) => {
         const active = exact ? pathname === href : pathname.startsWith(href);
@@ -57,9 +57,7 @@ export function BottomTabs({ items }: { items: NavItem[] }) {
               active ? "text-navy" : "text-muted",
             )}
           >
-            <span className={clsx("rounded-full px-4 py-1", active && "bg-gold")}>
-              {icon}
-            </span>
+            <span className={clsx("rounded-full px-4 py-1", active && "bg-gold")}>{icon}</span>
             {label}
           </Link>
         );

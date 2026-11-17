@@ -6,12 +6,33 @@ import { requireRole } from "@/lib/auth";
 const iconClass = "size-5";
 
 const nav: NavItem[] = [
-  { href: "/admin", label: "Overview", icon: <LayoutDashboard className={iconClass} aria-hidden />, exact: true },
-  { href: "/admin/classes", label: "Classes", icon: <BookOpen className={iconClass} aria-hidden /> },
+  {
+    href: "/admin",
+    label: "Overview",
+    icon: <LayoutDashboard className={iconClass} aria-hidden />,
+    exact: true,
+  },
+  {
+    href: "/admin/classes",
+    label: "Classes",
+    icon: <BookOpen className={iconClass} aria-hidden />,
+  },
   { href: "/admin/students", label: "Students", icon: <Users className={iconClass} aria-hidden /> },
-  { href: "/admin/invoices", label: "Invoices", icon: <Receipt className={iconClass} aria-hidden /> },
-  { href: "/admin/schedule", label: "Schedule", icon: <CalendarDays className={iconClass} aria-hidden /> },
-  { href: "/admin/logbooks", label: "Logbooks", icon: <NotebookPen className={iconClass} aria-hidden /> },
+  {
+    href: "/admin/invoices",
+    label: "Invoices",
+    icon: <Receipt className={iconClass} aria-hidden />,
+  },
+  {
+    href: "/admin/schedule",
+    label: "Schedule",
+    icon: <CalendarDays className={iconClass} aria-hidden />,
+  },
+  {
+    href: "/admin/logbooks",
+    label: "Logbooks",
+    icon: <NotebookPen className={iconClass} aria-hidden />,
+  },
 ];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {

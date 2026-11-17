@@ -9,14 +9,14 @@ type StatProps = {
 
 export function Stat({ icon: Icon, label, value, hint }: StatProps) {
   return (
-    <div className="flex items-center gap-4 rounded-card border border-cloud bg-white p-5">
-      <span className="grid size-11 shrink-0 place-items-center rounded-full bg-gold/25">
+    <div className="rounded-card border-cloud flex items-center gap-4 border bg-white p-5">
+      <span className="bg-gold/25 grid size-11 shrink-0 place-items-center rounded-full">
         <Icon className="size-5" aria-hidden />
       </span>
       <div className="min-w-0">
-        <p className="text-sm text-muted">{label}</p>
+        <p className="text-muted text-sm">{label}</p>
         <p className="text-2xl leading-tight font-bold">{value}</p>
-        {hint && <p className="text-xs text-muted">{hint}</p>}
+        {hint && <p className="text-muted text-xs">{hint}</p>}
       </div>
     </div>
   );

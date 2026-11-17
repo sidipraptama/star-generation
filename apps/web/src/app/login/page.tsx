@@ -17,14 +17,17 @@ export default async function LoginPage() {
     <main className="grid min-h-screen place-items-center px-4 py-10">
       <div className="w-full max-w-sm">
         <div className="mb-8 flex flex-col items-center text-center">
-          <span className="mb-3 grid size-14 place-items-center rounded-full bg-gold text-navy">
+          <span className="bg-gold text-navy mb-3 grid size-14 place-items-center rounded-full">
             <Star className="size-7" fill="currentColor" aria-hidden />
           </span>
           <h1 className="text-2xl font-bold">Star Generation</h1>
-          <p className="mt-1 text-sm text-muted">Sign in to manage your classes and lessons.</p>
+          <p className="text-muted mt-1 text-sm">Sign in to manage your classes and lessons.</p>
         </div>
 
-        <ActionForm action={signIn} className="space-y-4 rounded-card border border-cloud bg-white p-6">
+        <ActionForm
+          action={signIn}
+          className="rounded-card border-cloud space-y-4 border bg-white p-6"
+        >
           <Field label="Email" htmlFor="email">
             <Input name="email" type="email" autoComplete="email" required autoFocus />
           </Field>
@@ -34,7 +37,7 @@ export default async function LoginPage() {
           <SubmitButton className="w-full">Sign in</SubmitButton>
         </ActionForm>
 
-        <p className="mt-4 text-center text-xs text-muted">
+        <p className="text-muted mt-4 text-center text-xs">
           Accounts are created by the Star Generation team. Forgot your login? Contact an admin.
         </p>
       </div>

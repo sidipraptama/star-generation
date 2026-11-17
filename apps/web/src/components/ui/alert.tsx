@@ -19,7 +19,7 @@ export function Alert({ tone = "info", children, className }: AlertProps) {
   return (
     <div
       role={tone === "danger" ? "alert" : "status"}
-      className={clsx("flex items-start gap-2 rounded-card border p-3 text-sm", style, className)}
+      className={clsx("rounded-card flex items-start gap-2 border p-3 text-sm", style, className)}
     >
       <Icon className="mt-0.5 size-4 shrink-0" aria-hidden />
       <div>{children}</div>
