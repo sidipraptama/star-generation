@@ -126,7 +126,7 @@ export default async function TutorClassPage({ params }: Props) {
                 <tr>
                   <Th>When</Th>
                   <Th>Duration</Th>
-                  <Th>
+                  <Th sticky>
                     <span className="sr-only">Actions</span>
                   </Th>
                 </tr>
@@ -141,7 +141,7 @@ export default async function TutorClassPage({ params }: Props) {
                       </p>
                     </Td>
                     <Td>{formatDuration(lessonMinutes(lesson.start_at, lesson.end_at))}</Td>
-                    <Td className="text-right">
+                    <Td sticky className="text-right">
                       <CancelLessonDialog
                         lessonId={lesson.id}
                         when={formatLessonWhen(lesson.start_at, lesson.end_at)}

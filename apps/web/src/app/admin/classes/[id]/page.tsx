@@ -207,7 +207,7 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ id
                 <Th>Month</Th>
                 <Th>Lessons logged</Th>
                 <Th>Status</Th>
-                <Th />
+                <Th sticky />
               </tr>
             </thead>
             <tbody>
@@ -218,7 +218,7 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ id
                   <Td>
                     <StatusBadge kind="logbook" status={logbook.status} />
                   </Td>
-                  <Td className="text-right">
+                  <Td sticky className="text-right">
                     <ButtonLink
                       href={`/admin/logbooks/${logbook.id}`}
                       variant="secondary"
@@ -274,7 +274,7 @@ function LessonTable({
               <Th>When</Th>
               <Th>Tutor</Th>
               <Th>Status</Th>
-              <Th />
+              <Th sticky />
             </tr>
           </thead>
           <tbody>
@@ -287,7 +287,7 @@ function LessonTable({
                   <Td>
                     <LessonStatus status={lesson.status} endAt={lesson.end_at} />
                   </Td>
-                  <Td className="text-right">
+                  <Td sticky className="text-right">
                     {lesson.status === "scheduled" && (
                       <CancelLessonDialog lessonId={lesson.id} when={when} />
                     )}

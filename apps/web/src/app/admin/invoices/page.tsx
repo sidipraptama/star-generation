@@ -72,7 +72,7 @@ export default async function InvoicesPage({
               <Th>Amount</Th>
               <Th>Status</Th>
               <Th>Dates</Th>
-              <Th />
+              <Th sticky />
             </tr>
           </thead>
           <tbody>
@@ -98,7 +98,7 @@ export default async function InvoicesPage({
                       <p className="max-w-48 whitespace-normal">{invoice.void_reason}</p>
                     )}
                   </Td>
-                  <Td>
+                  <Td sticky>
                     <div className="flex items-center justify-end gap-1">
                       {invoice.status === "unpaid" && (
                         <MarkPaidDialog

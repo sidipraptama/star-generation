@@ -73,7 +73,7 @@ export default async function LogbooksPage({
               <Th>Tutor</Th>
               <Th>Lessons logged</Th>
               <Th>Status</Th>
-              <Th />
+              <Th sticky />
             </tr>
           </thead>
           <tbody>
@@ -86,7 +86,7 @@ export default async function LogbooksPage({
                 <Td>
                   <StatusBadge kind="logbook" status={logbook.status} />
                 </Td>
-                <Td className="text-right">
+                <Td sticky className="text-right">
                   <ButtonLink
                     href={`/admin/logbooks/${logbook.id}`}
                     variant={logbook.status === "submitted" ? "primary" : "secondary"}
