@@ -16,10 +16,11 @@ Single-day build. Rules are enforced in the database first, the UI follows. Each
 | 9 | Tutor views | classes, scheduling, logbook writing, earnings | done |
 | 10 | Student views | catalog and enrollment, my classes, invoices, hours, logbooks | done |
 | 11 | Docs and hardening | README, ARCHITECTURE, DECISIONS, end-to-end manual pass | done |
+| 12 | Docker Compose | one command runs db, auth, API, gateway and the app; tests run in Docker | done |
 
 ## Verification
 
-- `pnpm db:test`: 97 pgTAP assertions across access control, billing, lessons, logbooks and earnings.
+- `pnpm db:test` (Docker): 97 pgTAP assertions across access control, billing, lessons, logbooks and earnings.
 - `pnpm test`: Vitest unit tests for formatting, WIB handling and logbook progress rules.
 - Browser journeys for all three roles (enroll, pay, schedule, overlap refusal, logbook write, submit, request changes, approve, student read) were run with Playwright against the seeded database.
 

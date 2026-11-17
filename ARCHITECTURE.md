@@ -6,6 +6,8 @@ Next.js renders the three role areas and calls PostgreSQL (Supabase) as the sign
 Browser → Server Component / Server Action (zod) → Supabase API as the user → SQL function / RLS-filtered select → tables
 ```
 
+`docker compose up` runs it all: `web` (Next.js) → `gateway` (nginx) → `auth` (GoTrue) and `rest` (PostgREST) → `db` (Postgres), with `migrate` applying the schema and seed first ([ADR 0006](docs/adr/0006-docker-compose-stack.md)).
+
 ## Data model
 
 ```mermaid
