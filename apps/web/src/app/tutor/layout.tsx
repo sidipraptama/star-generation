@@ -1,4 +1,4 @@
-import { BookOpen, LayoutDashboard, Wallet } from "lucide-react";
+import { BookOpen, CalendarDays, LayoutDashboard, Wallet } from "lucide-react";
 import { AppShell } from "@/components/layout/app-shell";
 import type { NavItem } from "@/components/layout/nav-links";
 import { requireRole } from "@/lib/auth";
@@ -16,6 +16,11 @@ const nav: NavItem[] = [
     href: "/tutor/classes",
     label: "My classes",
     icon: <BookOpen className={iconClass} aria-hidden />,
+  },
+  {
+    href: "/tutor/schedule",
+    label: "Schedule",
+    icon: <CalendarDays className={iconClass} aria-hidden />,
   },
   {
     href: "/tutor/earnings",

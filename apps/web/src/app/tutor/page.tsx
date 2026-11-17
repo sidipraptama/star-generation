@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import {
   BookOpen,
   CalendarClock,
@@ -10,16 +9,19 @@ import {
   Wallet,
   type LucideIcon,
 } from "lucide-react";
+import { WeekStrip } from "@/components/calendar/week-strip";
 import { ButtonLink } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Stat } from "@/components/ui/stat";
 import { getProfile } from "@/lib/auth";
 import { formatLessonWhen, formatMonth, formatRupiah } from "@/lib/format";
-import { isPast } from "@/lib/time";
+import { buildHref, visibleRange } from "@/lib/calendar";
+import { isPast, todayInWib } from "@/lib/time";
 import { createClient } from "@/lib/supabase/server";
 import { plural, rows } from "./_lib/data";
 import { monthSlug, summarizeMonths } from "./_lib/logbook";
+import { getScheduleChips, scheduleLegend } from "./schedule/data";
 
 export const metadata: Metadata = { title: "Overview" };
 
@@ -57,16 +59,17 @@ function Todo({ icon: Icon, tone, title, description, href, cta }: TodoProps) {
 
 export default async function TutorOverviewPage() {
   const db = await createClient();
-  const [profile, classesRes, lessonsRes, entriesRes, logbooksRes, earningsRes] = await Promise.all(
-    [
+  const today = todayInWib();
+  const [profile, classesRes, lessonsRes, entriesRes, logbooksRes, earningsRes, weekChips] =
+    await Promise.all([
       getProfile(),
       db.from("classes").select("id, name"),
       db.from("lessons").select("id, class_id, start_at, end_at, status").order("start_at"),
       db.from("logbook_entries").select("lesson_id"),
       db.from("logbooks").select("id, class_id, month, status, review_note"),
       db.from("earnings").select("amount"),
-    ],
-  );
+      getScheduleChips(db, visibleRange("week", today)),
+    ]);
 
   const classes = rows(classesRes);
   const lessons = rows(lessonsRes);
@@ -119,7 +122,7 @@ export default async function TutorOverviewPage() {
         <Stat icon={Wallet} label="Approved earnings" value={formatRupiah(totalEarned)} />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="space-y-6">
         <Card title="To do">
           {hasTodo ? (
             <ul className="divide-cloud divide-y">
@@ -166,32 +169,13 @@ export default async function TutorOverviewPage() {
           )}
         </Card>
 
-        <Card title="Coming up">
-          {upcoming.length > 0 ? (
-            <ul className="divide-cloud divide-y">
-              {upcoming.slice(0, 5).map((lesson) => (
-                <li key={lesson.id} className="py-3 first:pt-0 last:pb-0">
-                  <Link
-                    href={`/tutor/classes/${lesson.class_id}`}
-                    className="block hover:underline"
-                  >
-                    <p className="font-semibold">{classNames.get(lesson.class_id)}</p>
-                    <p className="text-muted text-sm">
-                      {formatLessonWhen(lesson.start_at, lesson.end_at)}
-                    </p>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <EmptyState
-              icon={CalendarClock}
-              title="No lessons scheduled"
-              description="Open one of your classes to add the next lesson."
-              action={<ButtonLink href="/tutor/classes">Go to my classes</ButtonLink>}
-            />
-          )}
-        </Card>
+        <WeekStrip
+          today={today}
+          chips={weekChips}
+          legend={scheduleLegend}
+          scheduleHref="/tutor/schedule"
+          chipHref={(id) => buildHref("/tutor/schedule", { view: "week", date: today, lesson: id })}
+        />
       </div>
     </>
   );
