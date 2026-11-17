@@ -6,6 +6,7 @@ Role-based web app for group classes. Admins run classes, invoices and logbook r
 | ----- | ---------------------------------------------------------------------------------------------------------------------- |
 | Stack | TypeScript, Next.js (App Router), Tailwind CSS v4, Supabase (Postgres, Auth, Storage), pnpm workspaces, Docker Compose |
 | Rules | Enforced in Postgres (constraints, RLS, functions), covered by pgTAP tests                                             |
+| AI    | Built with AI assistance (Claude Code), see [AI assistance](#ai-assistance)                                            |
 | Docs  | [ARCHITECTURE](ARCHITECTURE.md) · [Decisions](docs/DECISIONS.md) · [ADRs](docs/adr) · [Delivery plan](docs/plan.md)    |
 
 ## Start here
@@ -109,6 +110,15 @@ Run with the stack up. Both load on top of the seed. Go back to the plain seed w
 | `pnpm db:types`                | Regenerate `apps/web/src/lib/database.types.ts` (in Docker) |
 
 The [Supabase CLI](https://supabase.com/docs/guides/cli) is optional: `supabase/config.toml` still works with `supabase start` (pass its publishable key as `SUPABASE_ANON_KEY`).
+
+## AI assistance
+
+| Topic           | Disclosure                                                                                                                                                                        |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Tool            | This project was built with AI assistance: [Claude Code](https://claude.com/claude-code) by Anthropic                                                                             |
+| What the AI did | Wrote most of the code, tests and documentation from my instructions                                                                                                              |
+| What I did      | Set the scope, made and approved the product decisions in [DECISIONS.md](docs/DECISIONS.md), directed the look and behaviour of the UI through feedback, and tried the app myself |
+| Checks          | The database rules, unit tests and browser journeys were run against the real stack, see [Verification](docs/plan.md#verification)                                                |
 
 ## Repository layout
 
