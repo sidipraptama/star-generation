@@ -1,0 +1,304 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1160 850" width="1160" height="850" role="img" aria-labelledby="t d" font-family="Inter, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+<title id="t">Data model</title>
+<desc id="d">Tables and their relationships: profiles, classes, rates, enrollments, invoices, lessons, logbooks, logbook entries and earnings.</desc>
+<rect width="1160" height="850" fill="#FFFFFF" />
+<g stroke="#5B6475" stroke-width="1.5" fill="none" stroke-linecap="square" stroke-linejoin="miter">
+<path d="M 260 110 L 320 110" />
+<path d="M 550 90 L 610 90" />
+<path d="M 550 170 L 610 170" />
+<path d="M 145 186 L 145 300" />
+<path d="M 370 186 L 370 350 L 260 350" />
+<path d="M 145 448 L 145 520" />
+<path d="M 500 186 L 500 350 L 610 350" />
+<path d="M 840 341 L 900 341" />
+<path d="M 435 186 L 435 560" />
+<path d="M 550 620 L 610 620" />
+<path d="M 725 492 L 725 560" />
+<path d="M 840 440 L 1015 440 L 1015 560" />
+<path d="M 400 708 L 400 792 L 1060 792 L 1060 752" />
+</g>
+<g stroke="#5B6475" stroke-width="1.5" fill="none">
+<line x1="269.0" y1="116.0" x2="269.0" y2="104.0" />
+<line x1="274.0" y1="116.0" x2="274.0" y2="104.0" />
+<line x1="306.0" y1="110.0" x2="320.0" y2="103.0" />
+<line x1="306.0" y1="110.0" x2="320.0" y2="110.0" />
+<line x1="306.0" y1="110.0" x2="320.0" y2="117.0" />
+<circle cx="299.0" cy="110.0" r="4" fill="#fff" />
+<line x1="559.0" y1="96.0" x2="559.0" y2="84.0" />
+<line x1="564.0" y1="96.0" x2="564.0" y2="84.0" />
+<line x1="601.0" y1="84.0" x2="601.0" y2="96.0" />
+<line x1="596.0" y1="84.0" x2="596.0" y2="96.0" />
+<line x1="559.0" y1="176.0" x2="559.0" y2="164.0" />
+<line x1="564.0" y1="176.0" x2="564.0" y2="164.0" />
+<line x1="601.0" y1="164.0" x2="601.0" y2="176.0" />
+<line x1="596.0" y1="164.0" x2="596.0" y2="176.0" />
+<line x1="139.0" y1="195.0" x2="151.0" y2="195.0" />
+<line x1="139.0" y1="200.0" x2="151.0" y2="200.0" />
+<line x1="145.0" y1="286.0" x2="152.0" y2="300.0" />
+<line x1="145.0" y1="286.0" x2="145.0" y2="300.0" />
+<line x1="145.0" y1="286.0" x2="138.0" y2="300.0" />
+<circle cx="145.0" cy="279.0" r="4" fill="#fff" />
+<line x1="364.0" y1="195.0" x2="376.0" y2="195.0" />
+<line x1="364.0" y1="200.0" x2="376.0" y2="200.0" />
+<line x1="274.0" y1="350.0" x2="260.0" y2="357.0" />
+<line x1="274.0" y1="350.0" x2="260.0" y2="350.0" />
+<line x1="274.0" y1="350.0" x2="260.0" y2="343.0" />
+<circle cx="281.0" cy="350.0" r="4" fill="#fff" />
+<line x1="139.0" y1="457.0" x2="151.0" y2="457.0" />
+<line x1="139.0" y1="462.0" x2="151.0" y2="462.0" />
+<line x1="145.0" y1="506.0" x2="152.0" y2="520.0" />
+<line x1="145.0" y1="506.0" x2="145.0" y2="520.0" />
+<line x1="145.0" y1="506.0" x2="138.0" y2="520.0" />
+<circle cx="145.0" cy="499.0" r="4" fill="#fff" />
+<line x1="494.0" y1="195.0" x2="506.0" y2="195.0" />
+<line x1="494.0" y1="200.0" x2="506.0" y2="200.0" />
+<line x1="596.0" y1="350.0" x2="610.0" y2="343.0" />
+<line x1="596.0" y1="350.0" x2="610.0" y2="350.0" />
+<line x1="596.0" y1="350.0" x2="610.0" y2="357.0" />
+<circle cx="589.0" cy="350.0" r="4" fill="#fff" />
+<line x1="849.0" y1="347.0" x2="849.0" y2="335.0" />
+<line x1="854.0" y1="347.0" x2="854.0" y2="335.0" />
+<line x1="891.0" y1="335.0" x2="891.0" y2="347.0" />
+<line x1="886.0" y1="335.0" x2="886.0" y2="347.0" />
+<line x1="429.0" y1="195.0" x2="441.0" y2="195.0" />
+<line x1="429.0" y1="200.0" x2="441.0" y2="200.0" />
+<line x1="435.0" y1="546.0" x2="442.0" y2="560.0" />
+<line x1="435.0" y1="546.0" x2="435.0" y2="560.0" />
+<line x1="435.0" y1="546.0" x2="428.0" y2="560.0" />
+<circle cx="435.0" cy="539.0" r="4" fill="#fff" />
+<line x1="559.0" y1="626.0" x2="559.0" y2="614.0" />
+<line x1="564.0" y1="626.0" x2="564.0" y2="614.0" />
+<line x1="596.0" y1="620.0" x2="610.0" y2="613.0" />
+<line x1="596.0" y1="620.0" x2="610.0" y2="620.0" />
+<line x1="596.0" y1="620.0" x2="610.0" y2="627.0" />
+<circle cx="589.0" cy="620.0" r="4" fill="#fff" />
+<line x1="719.0" y1="501.0" x2="731.0" y2="501.0" />
+<line x1="719.0" y1="506.0" x2="731.0" y2="506.0" />
+<line x1="731.0" y1="551.0" x2="719.0" y2="551.0" />
+<circle cx="725.0" cy="543.0" r="4" fill="#fff" />
+<line x1="849.0" y1="446.0" x2="849.0" y2="434.0" />
+<line x1="854.0" y1="446.0" x2="854.0" y2="434.0" />
+<line x1="1021.0" y1="551.0" x2="1009.0" y2="551.0" />
+<circle cx="1015.0" cy="543.0" r="4" fill="#fff" />
+<line x1="394.0" y1="717.0" x2="406.0" y2="717.0" />
+<line x1="394.0" y1="722.0" x2="406.0" y2="722.0" />
+<line x1="1060.0" y1="766.0" x2="1053.0" y2="752.0" />
+<line x1="1060.0" y1="766.0" x2="1060.0" y2="752.0" />
+<line x1="1060.0" y1="766.0" x2="1067.0" y2="752.0" />
+<circle cx="1060.0" cy="773.0" r="4" fill="#fff" />
+</g>
+<g font-size="11.5" fill="#6E7585">
+<text x="290" y="101" text-anchor="middle">teaches</text>
+<text x="580" y="81" text-anchor="middle">has</text>
+<text x="580" y="161" text-anchor="middle">has</text>
+<text x="153" y="248" text-anchor="start">student</text>
+<text x="315" y="341" text-anchor="middle">has</text>
+<text x="153" y="488" text-anchor="start">bills</text>
+<text x="555" y="341" text-anchor="middle">schedules</text>
+<text x="870" y="332" text-anchor="middle">rate</text>
+<text x="443" y="380" text-anchor="start">one per month</text>
+<text x="580" y="611" text-anchor="middle">contains</text>
+<text x="733" y="530" text-anchor="start">one entry</text>
+<text x="928" y="431" text-anchor="middle">paid once</text>
+<text x="730" y="783" text-anchor="middle">approves</text>
+</g>
+<g>
+<rect x="30" y="60" width="230" height="128" rx="5" fill="#FFFFFF" stroke="#CBD1DB" stroke-width="1.2" />
+<path d="M 30 65 Q 30 60 35 60 L 255 60 Q 260 60 260 65 L 260 92 L 30 92 Z" fill="#2F3F5F" />
+<text x="42" y="81" font-size="14" font-weight="700" fill="#FFFFFF">profiles</text>
+<text x="42" y="112" font-size="13" font-weight="600" fill="#1F2937">id</text>
+<text x="248" y="112" font-size="10.5" font-weight="700" fill="#6E7585" text-anchor="end" letter-spacing="0.4">PK</text>
+<line x1="31" y1="116" x2="259" y2="116" stroke="#EEF0F4" stroke-width="1" />
+<text x="42" y="134" font-size="13" font-weight="400" fill="#1F2937">full_name</text>
+<line x1="31" y1="138" x2="259" y2="138" stroke="#EEF0F4" stroke-width="1" />
+<text x="42" y="156" font-size="13" font-weight="400" fill="#1F2937">email</text>
+<line x1="31" y1="160" x2="259" y2="160" stroke="#EEF0F4" stroke-width="1" />
+<text x="42" y="178" font-size="13" font-weight="400" fill="#1F2937">role</text>
+</g>
+<g>
+<rect x="320" y="60" width="230" height="128" rx="5" fill="#FFFFFF" stroke="#CBD1DB" stroke-width="1.2" />
+<path d="M 320 65 Q 320 60 325 60 L 545 60 Q 550 60 550 65 L 550 92 L 320 92 Z" fill="#2F3F5F" />
+<text x="332" y="81" font-size="14" font-weight="700" fill="#FFFFFF">classes</text>
+<text x="332" y="112" font-size="13" font-weight="600" fill="#1F2937">id</text>
+<text x="538" y="112" font-size="10.5" font-weight="700" fill="#6E7585" text-anchor="end" letter-spacing="0.4">PK</text>
+<line x1="321" y1="116" x2="549" y2="116" stroke="#EEF0F4" stroke-width="1" />
+<text x="332" y="134" font-size="13" font-weight="400" fill="#1F2937">name</text>
+<line x1="321" y1="138" x2="549" y2="138" stroke="#EEF0F4" stroke-width="1" />
+<text x="332" y="156" font-size="13" font-weight="400" fill="#1F2937">tutor_id</text>
+<text x="538" y="156" font-size="10.5" font-weight="700" fill="#6E7585" text-anchor="end" letter-spacing="0.4">FK</text>
+<line x1="321" y1="160" x2="549" y2="160" stroke="#EEF0F4" stroke-width="1" />
+<text x="332" y="178" font-size="13" font-weight="400" fill="#1F2937">capacity</text>
+</g>
+<g>
+<rect x="610" y="50" width="230" height="84" rx="5" fill="#FFFFFF" stroke="#CBD1DB" stroke-width="1.2" />
+<path d="M 610 55 Q 610 50 615 50 L 835 50 Q 840 50 840 55 L 840 82 L 610 82 Z" fill="#2F3F5F" />
+<text x="622" y="71" font-size="14" font-weight="700" fill="#FFFFFF">class_student_rates</text>
+<text x="622" y="102" font-size="13" font-weight="600" fill="#1F2937">class_id</text>
+<text x="828" y="102" font-size="10.5" font-weight="700" fill="#6E7585" text-anchor="end" letter-spacing="0.4">PK FK</text>
+<line x1="611" y1="106" x2="839" y2="106" stroke="#EEF0F4" stroke-width="1" />
+<text x="622" y="124" font-size="13" font-weight="400" fill="#1F2937">student_rate</text>
+</g>
+<g>
+<rect x="610" y="150" width="230" height="84" rx="5" fill="#FFFFFF" stroke="#CBD1DB" stroke-width="1.2" />
+<path d="M 610 155 Q 610 150 615 150 L 835 150 Q 840 150 840 155 L 840 182 L 610 182 Z" fill="#2F3F5F" />
+<text x="622" y="171" font-size="14" font-weight="700" fill="#FFFFFF">class_tutor_rates</text>
+<text x="622" y="202" font-size="13" font-weight="600" fill="#1F2937">class_id</text>
+<text x="828" y="202" font-size="10.5" font-weight="700" fill="#6E7585" text-anchor="end" letter-spacing="0.4">PK FK</text>
+<line x1="611" y1="206" x2="839" y2="206" stroke="#EEF0F4" stroke-width="1" />
+<text x="622" y="224" font-size="13" font-weight="400" fill="#1F2937">tutor_rate</text>
+</g>
+<g>
+<rect x="30" y="300" width="230" height="150" rx="5" fill="#FFFFFF" stroke="#CBD1DB" stroke-width="1.2" />
+<path d="M 30 305 Q 30 300 35 300 L 255 300 Q 260 300 260 305 L 260 332 L 30 332 Z" fill="#8A6A00" />
+<text x="42" y="321" font-size="14" font-weight="700" fill="#FFFFFF">enrollments</text>
+<text x="42" y="352" font-size="13" font-weight="600" fill="#1F2937">id</text>
+<text x="248" y="352" font-size="10.5" font-weight="700" fill="#6E7585" text-anchor="end" letter-spacing="0.4">PK</text>
+<line x1="31" y1="356" x2="259" y2="356" stroke="#EEF0F4" stroke-width="1" />
+<text x="42" y="374" font-size="13" font-weight="400" fill="#1F2937">class_id</text>
+<text x="248" y="374" font-size="10.5" font-weight="700" fill="#6E7585" text-anchor="end" letter-spacing="0.4">FK</text>
+<line x1="31" y1="378" x2="259" y2="378" stroke="#EEF0F4" stroke-width="1" />
+<text x="42" y="396" font-size="13" font-weight="400" fill="#1F2937">student_id</text>
+<text x="248" y="396" font-size="10.5" font-weight="700" fill="#6E7585" text-anchor="end" letter-spacing="0.4">FK</text>
+<line x1="31" y1="400" x2="259" y2="400" stroke="#EEF0F4" stroke-width="1" />
+<text x="42" y="418" font-size="13" font-weight="400" fill="#1F2937">status</text>
+<line x1="31" y1="422" x2="259" y2="422" stroke="#EEF0F4" stroke-width="1" />
+<text x="42" y="440" font-size="13" font-weight="400" fill="#1F2937">activated_at</text>
+</g>
+<g>
+<rect x="30" y="520" width="230" height="216" rx="5" fill="#FFFFFF" stroke="#CBD1DB" stroke-width="1.2" />
+<path d="M 30 525 Q 30 520 35 520 L 255 520 Q 260 520 260 525 L 260 552 L 30 552 Z" fill="#8A6A00" />
+<text x="42" y="541" font-size="14" font-weight="700" fill="#FFFFFF">invoices</text>
+<text x="42" y="572" font-size="13" font-weight="600" fill="#1F2937">id</text>
+<text x="248" y="572" font-size="10.5" font-weight="700" fill="#6E7585" text-anchor="end" letter-spacing="0.4">PK</text>
+<line x1="31" y1="576" x2="259" y2="576" stroke="#EEF0F4" stroke-width="1" />
+<text x="42" y="594" font-size="13" font-weight="400" fill="#1F2937">enrollment_id</text>
+<text x="248" y="594" font-size="10.5" font-weight="700" fill="#6E7585" text-anchor="end" letter-spacing="0.4">FK</text>
+<line x1="31" y1="598" x2="259" y2="598" stroke="#EEF0F4" stroke-width="1" />
+<text x="42" y="616" font-size="13" font-weight="400" fill="#1F2937">hours</text>
+<line x1="31" y1="620" x2="259" y2="620" stroke="#EEF0F4" stroke-width="1" />
+<text x="42" y="638" font-size="13" font-weight="400" fill="#1F2937">student_rate</text>
+<line x1="31" y1="642" x2="259" y2="642" stroke="#EEF0F4" stroke-width="1" />
+<text x="42" y="660" font-size="13" font-weight="400" fill="#1F2937">amount</text>
+<line x1="31" y1="664" x2="259" y2="664" stroke="#EEF0F4" stroke-width="1" />
+<text x="42" y="682" font-size="13" font-weight="400" fill="#1F2937">status</text>
+<line x1="31" y1="686" x2="259" y2="686" stroke="#EEF0F4" stroke-width="1" />
+<text x="42" y="704" font-size="13" font-weight="400" fill="#1F2937">paid_by</text>
+<text x="248" y="704" font-size="10.5" font-weight="700" fill="#6E7585" text-anchor="end" letter-spacing="0.4">FK</text>
+<line x1="31" y1="708" x2="259" y2="708" stroke="#EEF0F4" stroke-width="1" />
+<text x="42" y="726" font-size="13" font-weight="400" fill="#1F2937">proof_path</text>
+</g>
+<g>
+<rect x="610" y="300" width="230" height="194" rx="5" fill="#FFFFFF" stroke="#CBD1DB" stroke-width="1.2" />
+<path d="M 610 305 Q 610 300 615 300 L 835 300 Q 840 300 840 305 L 840 332 L 610 332 Z" fill="#3A6A94" />
+<text x="622" y="321" font-size="14" font-weight="700" fill="#FFFFFF">lessons</text>
+<text x="622" y="352" font-size="13" font-weight="600" fill="#1F2937">id</text>
+<text x="828" y="352" font-size="10.5" font-weight="700" fill="#6E7585" text-anchor="end" letter-spacing="0.4">PK</text>
+<line x1="611" y1="356" x2="839" y2="356" stroke="#EEF0F4" stroke-width="1" />
+<text x="622" y="374" font-size="13" font-weight="400" fill="#1F2937">class_id</text>
+<text x="828" y="374" font-size="10.5" font-weight="700" fill="#6E7585" text-anchor="end" letter-spacing="0.4">FK</text>
+<line x1="611" y1="378" x2="839" y2="378" stroke="#EEF0F4" stroke-width="1" />
+<text x="622" y="396" font-size="13" font-weight="400" fill="#1F2937">tutor_id</text>
+<text x="828" y="396" font-size="10.5" font-weight="700" fill="#6E7585" text-anchor="end" letter-spacing="0.4">FK</text>
+<line x1="611" y1="400" x2="839" y2="400" stroke="#EEF0F4" stroke-width="1" />
+<text x="622" y="418" font-size="13" font-weight="400" fill="#1F2937">start_at</text>
+<line x1="611" y1="422" x2="839" y2="422" stroke="#EEF0F4" stroke-width="1" />
+<text x="622" y="440" font-size="13" font-weight="400" fill="#1F2937">end_at</text>
+<line x1="611" y1="444" x2="839" y2="444" stroke="#EEF0F4" stroke-width="1" />
+<text x="622" y="462" font-size="13" font-weight="400" fill="#1F2937">status</text>
+<line x1="611" y1="466" x2="839" y2="466" stroke="#EEF0F4" stroke-width="1" />
+<text x="622" y="484" font-size="13" font-weight="400" fill="#1F2937">series_id</text>
+</g>
+<g>
+<rect x="900" y="300" width="230" height="84" rx="5" fill="#FFFFFF" stroke="#CBD1DB" stroke-width="1.2" />
+<path d="M 900 305 Q 900 300 905 300 L 1125 300 Q 1130 300 1130 305 L 1130 332 L 900 332 Z" fill="#3A6A94" />
+<text x="912" y="321" font-size="14" font-weight="700" fill="#FFFFFF">lesson_rates</text>
+<text x="912" y="352" font-size="13" font-weight="600" fill="#1F2937">lesson_id</text>
+<text x="1118" y="352" font-size="10.5" font-weight="700" fill="#6E7585" text-anchor="end" letter-spacing="0.4">PK FK</text>
+<line x1="901" y1="356" x2="1129" y2="356" stroke="#EEF0F4" stroke-width="1" />
+<text x="912" y="374" font-size="13" font-weight="400" fill="#1F2937">tutor_rate</text>
+</g>
+<g>
+<rect x="320" y="560" width="230" height="150" rx="5" fill="#FFFFFF" stroke="#CBD1DB" stroke-width="1.2" />
+<path d="M 320 565 Q 320 560 325 560 L 545 560 Q 550 560 550 565 L 550 592 L 320 592 Z" fill="#2F6B4A" />
+<text x="332" y="581" font-size="14" font-weight="700" fill="#FFFFFF">logbooks</text>
+<text x="332" y="612" font-size="13" font-weight="600" fill="#1F2937">id</text>
+<text x="538" y="612" font-size="10.5" font-weight="700" fill="#6E7585" text-anchor="end" letter-spacing="0.4">PK</text>
+<line x1="321" y1="616" x2="549" y2="616" stroke="#EEF0F4" stroke-width="1" />
+<text x="332" y="634" font-size="13" font-weight="400" fill="#1F2937">class_id</text>
+<text x="538" y="634" font-size="10.5" font-weight="700" fill="#6E7585" text-anchor="end" letter-spacing="0.4">FK</text>
+<line x1="321" y1="638" x2="549" y2="638" stroke="#EEF0F4" stroke-width="1" />
+<text x="332" y="656" font-size="13" font-weight="400" fill="#1F2937">month</text>
+<line x1="321" y1="660" x2="549" y2="660" stroke="#EEF0F4" stroke-width="1" />
+<text x="332" y="678" font-size="13" font-weight="400" fill="#1F2937">status</text>
+<line x1="321" y1="682" x2="549" y2="682" stroke="#EEF0F4" stroke-width="1" />
+<text x="332" y="700" font-size="13" font-weight="400" fill="#1F2937">review_note</text>
+</g>
+<g>
+<rect x="610" y="560" width="230" height="128" rx="5" fill="#FFFFFF" stroke="#CBD1DB" stroke-width="1.2" />
+<path d="M 610 565 Q 610 560 615 560 L 835 560 Q 840 560 840 565 L 840 592 L 610 592 Z" fill="#2F6B4A" />
+<text x="622" y="581" font-size="14" font-weight="700" fill="#FFFFFF">logbook_entries</text>
+<text x="622" y="612" font-size="13" font-weight="600" fill="#1F2937">id</text>
+<text x="828" y="612" font-size="10.5" font-weight="700" fill="#6E7585" text-anchor="end" letter-spacing="0.4">PK</text>
+<line x1="611" y1="616" x2="839" y2="616" stroke="#EEF0F4" stroke-width="1" />
+<text x="622" y="634" font-size="13" font-weight="400" fill="#1F2937">logbook_id</text>
+<text x="828" y="634" font-size="10.5" font-weight="700" fill="#6E7585" text-anchor="end" letter-spacing="0.4">FK</text>
+<line x1="611" y1="638" x2="839" y2="638" stroke="#EEF0F4" stroke-width="1" />
+<text x="622" y="656" font-size="13" font-weight="400" fill="#1F2937">lesson_id</text>
+<text x="828" y="656" font-size="10.5" font-weight="700" fill="#6E7585" text-anchor="end" letter-spacing="0.4">FK</text>
+<line x1="611" y1="660" x2="839" y2="660" stroke="#EEF0F4" stroke-width="1" />
+<text x="622" y="678" font-size="13" font-weight="400" fill="#1F2937">topic, activities, ...</text>
+</g>
+<g>
+<rect x="900" y="560" width="230" height="194" rx="5" fill="#FFFFFF" stroke="#CBD1DB" stroke-width="1.2" />
+<path d="M 900 565 Q 900 560 905 560 L 1125 560 Q 1130 560 1130 565 L 1130 592 L 900 592 Z" fill="#2F6B4A" />
+<text x="912" y="581" font-size="14" font-weight="700" fill="#FFFFFF">earnings</text>
+<text x="912" y="612" font-size="13" font-weight="600" fill="#1F2937">id</text>
+<text x="1118" y="612" font-size="10.5" font-weight="700" fill="#6E7585" text-anchor="end" letter-spacing="0.4">PK</text>
+<line x1="901" y1="616" x2="1129" y2="616" stroke="#EEF0F4" stroke-width="1" />
+<text x="912" y="634" font-size="13" font-weight="400" fill="#1F2937">lesson_id</text>
+<text x="1118" y="634" font-size="10.5" font-weight="700" fill="#6E7585" text-anchor="end" letter-spacing="0.4">FK</text>
+<line x1="901" y1="638" x2="1129" y2="638" stroke="#EEF0F4" stroke-width="1" />
+<text x="912" y="656" font-size="13" font-weight="400" fill="#1F2937">logbook_id</text>
+<text x="1118" y="656" font-size="10.5" font-weight="700" fill="#6E7585" text-anchor="end" letter-spacing="0.4">FK</text>
+<line x1="901" y1="660" x2="1129" y2="660" stroke="#EEF0F4" stroke-width="1" />
+<text x="912" y="678" font-size="13" font-weight="400" fill="#1F2937">tutor_id</text>
+<text x="1118" y="678" font-size="10.5" font-weight="700" fill="#6E7585" text-anchor="end" letter-spacing="0.4">FK</text>
+<line x1="901" y1="682" x2="1129" y2="682" stroke="#EEF0F4" stroke-width="1" />
+<text x="912" y="700" font-size="13" font-weight="400" fill="#1F2937">minutes</text>
+<line x1="901" y1="704" x2="1129" y2="704" stroke="#EEF0F4" stroke-width="1" />
+<text x="912" y="722" font-size="13" font-weight="400" fill="#1F2937">tutor_rate</text>
+<line x1="901" y1="726" x2="1129" y2="726" stroke="#EEF0F4" stroke-width="1" />
+<text x="912" y="744" font-size="13" font-weight="400" fill="#1F2937">amount</text>
+</g>
+<g>
+<rect x="900" y="50" width="230" height="212" rx="5" fill="#FAFBFC" stroke="#CBD1DB" stroke-width="1.2" />
+<text x="912" y="72" font-size="13" font-weight="700" fill="#1F2937">How to read it</text>
+<rect x="912" y="88" width="14" height="14" rx="3" fill="#2F3F5F" />
+<text x="934" y="100" font-size="12.5" fill="#1F2937">Classes and people</text>
+<rect x="912" y="110" width="14" height="14" rx="3" fill="#8A6A00" />
+<text x="934" y="122" font-size="12.5" fill="#1F2937">Billing</text>
+<rect x="912" y="132" width="14" height="14" rx="3" fill="#3A6A94" />
+<text x="934" y="144" font-size="12.5" fill="#1F2937">Lessons</text>
+<rect x="912" y="154" width="14" height="14" rx="3" fill="#2F6B4A" />
+<text x="934" y="166" font-size="12.5" fill="#1F2937">Logbooks and earnings</text>
+<g stroke="#5B6475" stroke-width="1.5" fill="none">
+<line x1="912" y1="190" x2="952" y2="190" />
+<line x1="943.0" y1="184.0" x2="943.0" y2="196.0" />
+<line x1="938.0" y1="184.0" x2="938.0" y2="196.0" />
+<text x="966" y="194" font-size="12.5" fill="#1F2937" stroke="none">exactly one</text>
+<line x1="912" y1="212" x2="952" y2="212" />
+<line x1="938.0" y1="212.0" x2="952.0" y2="205.0" />
+<line x1="938.0" y1="212.0" x2="952.0" y2="212.0" />
+<line x1="938.0" y1="212.0" x2="952.0" y2="219.0" />
+<circle cx="931.0" cy="212.0" r="4" fill="#fff" />
+<text x="966" y="216" font-size="12.5" fill="#1F2937" stroke="none">zero or many</text>
+<line x1="912" y1="234" x2="952" y2="234" />
+<line x1="943.0" y1="228.0" x2="943.0" y2="240.0" />
+<circle cx="935.0" cy="234.0" r="4" fill="#fff" />
+<text x="966" y="238" font-size="12.5" fill="#1F2937" stroke="none">zero or one</text>
+</g>
+<text x="912" y="252" font-size="11.5" fill="#6E7585">PK primary key · FK foreign key</text>
+</g>
+<text x="30" y="814" font-size="12" fill="#6E7585">Derived, not stored: hour_ledger and enrollment_balances (purchases minus delivered lessons).</text>
+<text x="30" y="832" font-size="12" fill="#6E7585">tutor_id on lessons and earnings also points to profiles (not drawn). Student and tutor rates live in separate tables so each role sees only its own.</text>
+</svg>

@@ -115,6 +115,18 @@ Left out on purpose: dragging to reschedule (needs a full edit-lesson rule set),
 | Optional payment proof and approved-by name  | [ADR 0010](adr/0010-payment-proofs-in-private-storage.md)        |
 | Search, filters and pagination on every list | [ADR 0011](adr/0011-lists-searched-and-paged-in-the-database.md) |
 
+## Known limitations
+
+| Limitation                                           | Why                                                            | Next step                                              |
+| ---------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------ |
+| Payment is simulated                                 | No gateway in scope; an admin confirms transfers like today    | A gateway or bank webhook behind `mark_invoice_paid()` |
+| No attendance                                        | Every active student uses the lesson's hours                   | Attendance per student                                 |
+| Browser tests are not in the repo                    | They ran from outside against the real stack                   | Commit them as `pnpm e2e`                              |
+| The admin month view loads every lesson of the month | The calendar is range based; tutor and class filters narrow it | Cap or summarise per day                               |
+| Search is plain substring, no typo tolerance         | `ilike` with trigram indexes is enough at this size            | Full-text search if it is needed                       |
+| Proof thumbnails use the original image              | Images are capped at 5 MB                                      | Resize when uploading                                  |
+| A student's own classes are not paged                | A student only has a handful                                   | Page them if that changes                              |
+
 ## Next, with another day
 
 | Idea                                        | Why                                                                  |

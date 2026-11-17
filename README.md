@@ -8,6 +8,19 @@ Role-based web app for group classes. Admins run classes, invoices and logbook r
 | Rules | Enforced in Postgres (constraints, RLS, functions), covered by pgTAP tests                                             |
 | Docs  | [ARCHITECTURE](ARCHITECTURE.md) · [Decisions](docs/DECISIONS.md) · [ADRs](docs/adr) · [Delivery plan](docs/plan.md)    |
 
+## Start here
+
+| Step | Do                                                                                                            |
+| ---- | ------------------------------------------------------------------------------------------------------------- |
+| 1    | Run `docker compose up --build`, then open http://localhost:3000                                              |
+| 2    | Sign in with a [seeded user](#seeded-logins), password `Password123!`                                         |
+| 3    | Read [docs/DECISIONS.md](docs/DECISIONS.md) first: it answers each open decision and explains the improvement |
+| 4    | [ARCHITECTURE.md](ARCHITECTURE.md) has the data model and where each rule is enforced                         |
+
+|                                   Admin: invoices                                   |                                   Tutor: schedule                                   |                                  Student: class                                  |
+| :---------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------: | :------------------------------------------------------------------------------: |
+| [![Admin invoices](docs/images/admin-invoices.png)](docs/images/admin-invoices.png) | [![Tutor schedule](docs/images/tutor-schedule.png)](docs/images/tutor-schedule.png) | [![Student class](docs/images/student-class.png)](docs/images/student-class.png) |
+
 ## Run it
 
 Needs only [Docker](https://www.docker.com/products/docker-desktop) with Compose.
