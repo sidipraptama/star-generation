@@ -15,13 +15,15 @@ type AppShellProps = {
 export function AppShell({ profile, nav, children }: AppShellProps) {
   return (
     <div className="min-h-screen md:flex">
-      <aside className="bg-navy hidden w-64 shrink-0 flex-col p-4 text-white md:flex">
-        <div className="mb-8 flex items-center gap-3 px-2 pt-2">
+      <aside className="bg-navy hidden w-64 shrink-0 flex-col p-4 text-white md:sticky md:top-0 md:flex md:h-dvh md:self-start">
+        <div className="mb-8 flex shrink-0 items-center gap-3 px-2 pt-2">
           <Logo height={44} />
           <span className="text-lg leading-tight font-bold">Star Generation</span>
         </div>
-        <SidebarLinks items={nav} />
-        <div className="mt-auto border-t border-white/15 pt-4">
+        <div className="min-h-0 flex-1 overflow-y-auto">
+          <SidebarLinks items={nav} />
+        </div>
+        <div className="shrink-0 border-t border-white/15 pt-4">
           <p className="truncate px-2 text-sm font-semibold">{profile.full_name}</p>
           <p className="px-2 text-xs text-white/60">{roleLabels[profile.role]}</p>
           <form action={signOut} className="mt-3">
@@ -37,7 +39,7 @@ export function AppShell({ profile, nav, children }: AppShellProps) {
       </aside>
 
       <div className="min-w-0 flex-1">
-        <header className="bg-navy flex items-center justify-between px-4 py-3 text-white md:hidden">
+        <header className="bg-navy sticky top-0 z-20 flex items-center justify-between px-4 py-3 text-white md:hidden">
           <span className="flex items-center gap-2 font-bold">
             <Logo height={28} />
             Star Generation
