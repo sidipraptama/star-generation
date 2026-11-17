@@ -1,21 +1,23 @@
-import { Field, Input, Select, Textarea } from "@/components/ui/field";
+import { searchTutors } from "@/app/admin/options";
+import { Combobox } from "@/components/ui/combobox";
+import { Field, Input, Textarea } from "@/components/ui/field";
 
 type ClassDefaults = {
   name?: string;
   description?: string | null;
   tutorId?: string;
+  tutorName?: string;
   capacity?: number;
   studentRate?: number;
   tutorRate?: number;
 };
 
 type ClassFormFieldsProps = {
-  tutors: { id: string; full_name: string }[];
   idPrefix: string;
   defaults?: ClassDefaults;
 };
 
-export function ClassFormFields({ tutors, idPrefix, defaults = {} }: ClassFormFieldsProps) {
+export function ClassFormFields({ idPrefix, defaults = {} }: ClassFormFieldsProps) {
   const id = (name: string) => `${idPrefix}-${name}`;
 
   return (
@@ -39,16 +41,16 @@ export function ClassFormFields({ tutors, idPrefix, defaults = {} }: ClassFormFi
         />
       </Field>
       <Field label="Tutor" htmlFor={id("tutorId")}>
-        <Select id={id("tutorId")} name="tutorId" defaultValue={defaults.tutorId ?? ""} required>
-          <option value="" disabled>
-            Choose a tutor
-          </option>
-          {tutors.map((tutor) => (
-            <option key={tutor.id} value={tutor.id}>
-              {tutor.full_name}
-            </option>
-          ))}
-        </Select>
+        <Combobox
+          id={id("tutorId")}
+          name="tutorId"
+          loadOptions={searchTutors}
+          defaultValue={defaults.tutorId}
+          defaultLabel={defaults.tutorName}
+          placeholder="Choose a tutor"
+          searchPlaceholder="Search tutors…"
+          required
+        />
       </Field>
       <div className="grid gap-4 sm:grid-cols-3">
         <Field label="Seats" htmlFor={id("capacity")} hint="Maximum students">

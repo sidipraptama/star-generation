@@ -1,6 +1,7 @@
 import { scheduleLesson, scheduleLessonsWeekly } from "@/app/tutor/actions";
 import { RecurringFields } from "@/components/tutor/recurring-fields";
-import { Field, Input, Select } from "@/components/ui/field";
+import { Combobox } from "@/components/ui/combobox";
+import { Field, Input } from "@/components/ui/field";
 import { RouteDialogForm } from "@/components/ui/route-dialog";
 import { todayInWib } from "@/lib/time";
 
@@ -25,13 +26,13 @@ export function AddLessonRouteDialog({ classes, initial, closeHref }: AddLessonR
         <input type="hidden" name="classId" value={classes[0].id} />
       ) : (
         <Field label="Class" htmlFor="classId">
-          <Select name="classId" required defaultValue={classes[0]?.id}>
-            {classes.map((item) => (
-              <option key={item.id} value={item.id}>
-                {item.name}
-              </option>
-            ))}
-          </Select>
+          <Combobox
+            name="classId"
+            options={classes.map((item) => ({ value: item.id, label: item.name }))}
+            defaultValue={classes[0]?.id}
+            searchPlaceholder="Search classes…"
+            required
+          />
         </Field>
       )}
       <Field label="Date" htmlFor="date">

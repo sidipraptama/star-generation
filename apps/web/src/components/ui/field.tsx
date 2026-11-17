@@ -29,14 +29,6 @@ export function Input({ className, id, name, ...props }: InputProps) {
   return <input id={id ?? name} name={name} className={clsx(controlClass, className)} {...props} />;
 }
 
-type SelectProps = React.SelectHTMLAttributes<HTMLSelectElement> & { name: string };
-
-export function Select({ className, id, name, ...props }: SelectProps) {
-  return (
-    <select id={id ?? name} name={name} className={clsx(controlClass, className)} {...props} />
-  );
-}
-
 type TextareaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement> & { name: string };
 
 export function Textarea({ className, id, name, rows = 3, ...props }: TextareaProps) {

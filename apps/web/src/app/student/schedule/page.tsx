@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { GraduationCap } from "lucide-react";
 import { z } from "zod";
-import { AutoSubmitForm } from "@/components/calendar/filters";
 import { ScheduleCalendar } from "@/components/calendar/schedule-calendar";
 import { Alert } from "@/components/ui/alert";
 import { ButtonLink } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
-import { Field, Select } from "@/components/ui/field";
+import { Combobox } from "@/components/ui/combobox";
+import { Field } from "@/components/ui/field";
 import { PageHeader } from "@/components/ui/page-header";
 import { LessonDetailDialog } from "@/components/student/lesson-detail-dialog";
 import { buildHref, parseCalendarParams, visibleRange } from "@/lib/calendar";
@@ -103,20 +103,24 @@ export default async function StudentSchedulePage({ searchParams }: Props) {
 
   const filters =
     active.length > 1 ? (
-      <AutoSubmitForm action={BASE_PATH} className="max-w-xs">
+      <form action={BASE_PATH} method="get" className="max-w-xs">
         <input type="hidden" name="view" value={view} />
         <input type="hidden" name="date" value={date} />
         <Field label="Class" htmlFor="class">
-          <Select name="class" defaultValue={selected?.classId ?? ""}>
-            <option value="">All my classes</option>
-            {active.map((enrollment) => (
-              <option key={enrollment.classId} value={enrollment.classId}>
-                {enrollment.className}
-              </option>
-            ))}
-          </Select>
+          <Combobox
+            key={selected?.classId ?? "all-classes"}
+            name="class"
+            options={active.map((enrollment) => ({
+              value: enrollment.classId,
+              label: enrollment.className,
+            }))}
+            defaultValue={selected?.classId ?? ""}
+            emptyLabel="All my classes"
+            searchPlaceholder="Search classes…"
+            submitOnSelect
+          />
         </Field>
-      </AutoSubmitForm>
+      </form>
     ) : null;
 
   return (

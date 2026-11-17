@@ -17,7 +17,7 @@ export const metadata: Metadata = { title: "Classes" };
 export default async function ClassesPage() {
   const db = await createClient();
 
-  const [classes, catalog, tutors] = await Promise.all([
+  const [classes, catalog] = await Promise.all([
     db
       .from("classes")
       .select(
@@ -25,7 +25,6 @@ export default async function ClassesPage() {
       )
       .order("name"),
     db.from("class_catalog").select("id, seats_taken"),
-    db.from("profiles").select("id, full_name").eq("role", "tutor").order("full_name"),
   ]);
 
   const seatsTaken = new Map(catalog.data?.map((row) => [row.id, row.seats_taken ?? 0]));
@@ -40,7 +39,7 @@ export default async function ClassesPage() {
       description="Set the tutor, the number of seats and the hourly rates."
       submitLabel="Create class"
     >
-      <ClassFormFields tutors={tutors.data ?? []} idPrefix="new-class" />
+      <ClassFormFields idPrefix="new-class" />
     </DialogForm>
   );
 

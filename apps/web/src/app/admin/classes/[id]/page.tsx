@@ -28,7 +28,7 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ id
 
   const db = await createClient();
 
-  const [classResult, enrollments, lessons, logbooks, tutors] = await Promise.all([
+  const [classResult, enrollments, lessons, logbooks] = await Promise.all([
     db
       .from("classes")
       .select(
@@ -52,7 +52,6 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ id
       .select("id, month, status, logbook_entries(count)")
       .eq("class_id", id)
       .order("month", { ascending: false }),
-    db.from("profiles").select("id, full_name").eq("role", "tutor").order("full_name"),
   ]);
 
   const item = classResult.data;
@@ -100,12 +99,12 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ id
               number of students already enrolled. A new tutor takes over upcoming lessons only.
             </Alert>
             <ClassFormFields
-              tutors={tutors.data ?? []}
               idPrefix="edit-class"
               defaults={{
                 name: item.name,
                 description: item.description,
                 tutorId: item.tutor_id,
+                tutorName: item.profiles?.full_name,
                 capacity: item.capacity,
                 studentRate,
                 tutorRate,

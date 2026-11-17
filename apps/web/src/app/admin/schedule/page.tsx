@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
+import { searchClasses, searchTutors } from "@/app/admin/options";
 import { LessonDetailDialog } from "@/components/admin/lesson-detail-dialog";
-import { AutoSubmitForm } from "@/components/calendar/filters";
 import { ScheduleCalendar } from "@/components/calendar/schedule-calendar";
-import { Select } from "@/components/ui/field";
+import { Combobox } from "@/components/ui/combobox";
 import { PageHeader } from "@/components/ui/page-header";
 import { buildHref, parseCalendarParams, visibleRange } from "@/lib/calendar";
 import { createClient } from "@/lib/supabase/server";
@@ -32,10 +32,12 @@ export default async function SchedulePage({
   const { from, to } = visibleRange(view, date);
 
   const db = await createClient();
-  const [chips, tutors, classes, lesson] = await Promise.all([
+  const [chips, tutor, selectedClass, lesson] = await Promise.all([
     getLessonChips(from, to, filters),
-    db.from("profiles").select("id, full_name").eq("role", "tutor").order("full_name"),
-    db.from("classes").select("id, name").order("name"),
+    filters.tutor
+      ? db.from("profiles").select("full_name").eq("id", filters.tutor).maybeSingle()
+      : null,
+    filters.class ? db.from("classes").select("name").eq("id", filters.class).maybeSingle() : null,
     lessonId ? getLessonDetail(lessonId) : null,
   ]);
 
@@ -55,32 +57,38 @@ export default async function SchedulePage({
         chips={chips}
         legend={scheduleLegend}
         filters={
-          <AutoSubmitForm action="/admin/schedule" className="flex flex-wrap gap-3">
+          <form action="/admin/schedule" method="get" className="flex flex-wrap gap-3">
             <input type="hidden" name="view" value={view} />
             <input type="hidden" name="date" value={date} />
             <label htmlFor="tutor" className="sr-only">
               Filter by tutor
             </label>
-            <Select name="tutor" defaultValue={filters.tutor ?? ""} className="w-auto min-w-48">
-              <option value="">All tutors</option>
-              {(tutors.data ?? []).map((tutor) => (
-                <option key={tutor.id} value={tutor.id}>
-                  {tutor.full_name}
-                </option>
-              ))}
-            </Select>
+            <Combobox
+              key={filters.tutor ?? "all-tutors"}
+              name="tutor"
+              loadOptions={searchTutors}
+              defaultValue={filters.tutor ?? ""}
+              defaultLabel={tutor?.data?.full_name}
+              emptyLabel="All tutors"
+              searchPlaceholder="Search tutors…"
+              submitOnSelect
+              className="w-56"
+            />
             <label htmlFor="class" className="sr-only">
               Filter by class
             </label>
-            <Select name="class" defaultValue={filters.class ?? ""} className="w-auto min-w-48">
-              <option value="">All classes</option>
-              {(classes.data ?? []).map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name}
-                </option>
-              ))}
-            </Select>
-          </AutoSubmitForm>
+            <Combobox
+              key={filters.class ?? "all-classes"}
+              name="class"
+              loadOptions={searchClasses}
+              defaultValue={filters.class ?? ""}
+              defaultLabel={selectedClass?.data?.name}
+              emptyLabel="All classes"
+              searchPlaceholder="Search classes…"
+              submitOnSelect
+              className="w-56"
+            />
+          </form>
         }
       />
 
