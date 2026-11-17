@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
 import { CalendarDays, Clock, GraduationCap, User } from "lucide-react";
+import { WeekStrip } from "@/components/calendar/week-strip";
 import { Badge } from "@/components/ui/badge";
 import { ButtonLink } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { HoursMeter } from "@/components/ui/hours-meter";
 import { PageHeader } from "@/components/ui/page-header";
+import { buildHref, visibleRange } from "@/lib/calendar";
 import { formatLessonWhen, formatRupiah } from "@/lib/format";
+import { todayInWib } from "@/lib/time";
 import { getMyEnrollments, getNextLessons } from "../data";
+import { getCoverage, getScheduleChips, scheduleLegend } from "../schedule/data";
 
 export const metadata: Metadata = { title: "My classes" };
 
@@ -16,6 +20,8 @@ export default async function MyClassesPage() {
   const active = enrollments.filter((enrollment) => enrollment.status === "active");
   const pending = enrollments.filter((enrollment) => enrollment.status === "pending_payment");
   const nextLessons = await getNextLessons(active.map((enrollment) => enrollment.classId));
+  const today = todayInWib();
+  const thisWeek = await getScheduleChips(visibleRange("week", today), await getCoverage(active));
 
   return (
     <>
@@ -91,6 +97,18 @@ export default async function MyClassesPage() {
                 );
               })}
             </section>
+          )}
+
+          {active.length > 0 && (
+            <WeekStrip
+              today={today}
+              chips={thisWeek}
+              legend={scheduleLegend}
+              scheduleHref="/student/schedule"
+              chipHref={(id) =>
+                buildHref("/student/schedule", { view: "week", date: today, lesson: id })
+              }
+            />
           )}
 
           {pending.length > 0 && (

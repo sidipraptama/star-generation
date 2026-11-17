@@ -1,4 +1,4 @@
-import { GraduationCap, Receipt, Search } from "lucide-react";
+import { CalendarDays, GraduationCap, Receipt, Search } from "lucide-react";
 import { AppShell } from "@/components/layout/app-shell";
 import type { NavItem } from "@/components/layout/nav-links";
 import { requireRole } from "@/lib/auth";
@@ -10,6 +10,11 @@ const nav: NavItem[] = [
     href: "/student/classes",
     label: "My classes",
     icon: <GraduationCap className={iconClass} aria-hidden />,
+  },
+  {
+    href: "/student/schedule",
+    label: "Schedule",
+    icon: <CalendarDays className={iconClass} aria-hidden />,
   },
   {
     href: "/student/browse",
