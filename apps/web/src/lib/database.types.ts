@@ -34,6 +34,13 @@ export type Database = {
             foreignKeyName: "class_student_rates_class_id_fkey"
             columns: ["class_id"]
             isOneToOne: true
+            referencedRelation: "class_list"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "class_student_rates_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: true
             referencedRelation: "classes"
             referencedColumns: ["id"]
           },
@@ -58,6 +65,13 @@ export type Database = {
             columns: ["class_id"]
             isOneToOne: true
             referencedRelation: "class_catalog"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "class_tutor_rates_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: true
+            referencedRelation: "class_list"
             referencedColumns: ["id"]
           },
           {
@@ -101,6 +115,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "classes_tutor_id_fkey"
+            columns: ["tutor_id"]
+            isOneToOne: false
+            referencedRelation: "student_enrollment_list"
+            referencedColumns: ["student_id"]
           },
         ]
       }
@@ -156,6 +177,13 @@ export type Database = {
             foreignKeyName: "earnings_class_id_fkey"
             columns: ["class_id"]
             isOneToOne: false
+            referencedRelation: "class_list"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "earnings_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
             referencedRelation: "classes"
             referencedColumns: ["id"]
           },
@@ -170,6 +198,20 @@ export type Database = {
             foreignKeyName: "earnings_logbook_id_fkey"
             columns: ["logbook_id"]
             isOneToOne: false
+            referencedRelation: "logbook_list"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "earnings_logbook_id_fkey"
+            columns: ["logbook_id"]
+            isOneToOne: false
+            referencedRelation: "logbook_progress"
+            referencedColumns: ["logbook_id"]
+          },
+          {
+            foreignKeyName: "earnings_logbook_id_fkey"
+            columns: ["logbook_id"]
+            isOneToOne: false
             referencedRelation: "logbooks"
             referencedColumns: ["id"]
           },
@@ -179,6 +221,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "earnings_tutor_id_fkey"
+            columns: ["tutor_id"]
+            isOneToOne: false
+            referencedRelation: "student_enrollment_list"
+            referencedColumns: ["student_id"]
           },
         ]
       }
@@ -219,6 +268,13 @@ export type Database = {
             foreignKeyName: "enrollments_class_id_fkey"
             columns: ["class_id"]
             isOneToOne: false
+            referencedRelation: "class_list"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "enrollments_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
             referencedRelation: "classes"
             referencedColumns: ["id"]
           },
@@ -228,6 +284,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "enrollments_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "student_enrollment_list"
+            referencedColumns: ["student_id"]
           },
         ]
       }
@@ -306,8 +369,36 @@ export type Database = {
             referencedColumns: ["enrollment_id"]
           },
           {
+            foreignKeyName: "invoices_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "invoice_list"
+            referencedColumns: ["enrollment_id"]
+          },
+          {
+            foreignKeyName: "invoices_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "student_enrollment_list"
+            referencedColumns: ["enrollment_id"]
+          },
+          {
             foreignKeyName: "invoices_paid_by_fkey"
             columns: ["paid_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_paid_by_fkey"
+            columns: ["paid_by"]
+            isOneToOne: false
+            referencedRelation: "student_enrollment_list"
+            referencedColumns: ["student_id"]
+          },
+          {
+            foreignKeyName: "invoices_voided_by_fkey"
+            columns: ["voided_by"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -316,8 +407,8 @@ export type Database = {
             foreignKeyName: "invoices_voided_by_fkey"
             columns: ["voided_by"]
             isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
+            referencedRelation: "student_enrollment_list"
+            referencedColumns: ["student_id"]
           },
         ]
       }
@@ -393,6 +484,13 @@ export type Database = {
             foreignKeyName: "lessons_class_id_fkey"
             columns: ["class_id"]
             isOneToOne: false
+            referencedRelation: "class_list"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lessons_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
             referencedRelation: "classes"
             referencedColumns: ["id"]
           },
@@ -402,6 +500,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lessons_tutor_id_fkey"
+            columns: ["tutor_id"]
+            isOneToOne: false
+            referencedRelation: "student_enrollment_list"
+            referencedColumns: ["student_id"]
           },
         ]
       }
@@ -446,6 +551,20 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "lessons"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "logbook_entries_logbook_id_fkey"
+            columns: ["logbook_id"]
+            isOneToOne: false
+            referencedRelation: "logbook_list"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "logbook_entries_logbook_id_fkey"
+            columns: ["logbook_id"]
+            isOneToOne: false
+            referencedRelation: "logbook_progress"
+            referencedColumns: ["logbook_id"]
           },
           {
             foreignKeyName: "logbook_entries_logbook_id_fkey"
@@ -505,6 +624,13 @@ export type Database = {
             foreignKeyName: "logbooks_class_id_fkey"
             columns: ["class_id"]
             isOneToOne: false
+            referencedRelation: "class_list"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "logbooks_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
             referencedRelation: "classes"
             referencedColumns: ["id"]
           },
@@ -516,11 +642,25 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "logbooks_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "student_enrollment_list"
+            referencedColumns: ["student_id"]
+          },
+          {
             foreignKeyName: "logbooks_submitted_by_fkey"
             columns: ["submitted_by"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "logbooks_submitted_by_fkey"
+            columns: ["submitted_by"]
+            isOneToOne: false
+            referencedRelation: "student_enrollment_list"
+            referencedColumns: ["student_id"]
           },
         ]
       }
@@ -550,17 +690,83 @@ export type Database = {
       }
     }
     Views: {
+      admin_stats: {
+        Row: {
+          active_students: number | null
+          classes: number | null
+          logbooks_to_review: number | null
+          unpaid_invoices: number | null
+        }
+        Relationships: []
+      }
       class_catalog: {
         Row: {
           capacity: number | null
           description: string | null
           id: string | null
           name: string | null
+          seats_left: number | null
           seats_taken: number | null
           student_rate: number | null
           tutor_name: string | null
         }
         Relationships: []
+      }
+      class_list: {
+        Row: {
+          capacity: number | null
+          description: string | null
+          id: string | null
+          name: string | null
+          next_lesson_end: string | null
+          next_lesson_start: string | null
+          seats_left: number | null
+          seats_taken: number | null
+          student_rate: number | null
+          tutor_id: string | null
+          tutor_name: string | null
+          tutor_rate: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "classes_tutor_id_fkey"
+            columns: ["tutor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "classes_tutor_id_fkey"
+            columns: ["tutor_id"]
+            isOneToOne: false
+            referencedRelation: "student_enrollment_list"
+            referencedColumns: ["student_id"]
+          },
+        ]
+      }
+      earning_months: {
+        Row: {
+          lessons: number | null
+          month: string | null
+          total: number | null
+          tutor_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "earnings_tutor_id_fkey"
+            columns: ["tutor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "earnings_tutor_id_fkey"
+            columns: ["tutor_id"]
+            isOneToOne: false
+            referencedRelation: "student_enrollment_list"
+            referencedColumns: ["student_id"]
+          },
+        ]
       }
       enrollment_balances: {
         Row: {
@@ -599,6 +805,13 @@ export type Database = {
             foreignKeyName: "enrollments_class_id_fkey"
             columns: ["class_id"]
             isOneToOne: false
+            referencedRelation: "class_list"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "enrollments_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
             referencedRelation: "classes"
             referencedColumns: ["id"]
           },
@@ -608,6 +821,201 @@ export type Database = {
         Row: {
           approved_by: string | null
           invoice_id: string | null
+        }
+        Relationships: []
+      }
+      invoice_list: {
+        Row: {
+          amount: number | null
+          approved_by: string | null
+          balance_minutes: number | null
+          can_cancel: boolean | null
+          class_id: string | null
+          class_name: string | null
+          enrollment_id: string | null
+          hours: number | null
+          id: string | null
+          issued_at: string | null
+          paid_at: string | null
+          payment_reference: string | null
+          proof_uploaded_at: string | null
+          status: Database["public"]["Enums"]["invoice_status"] | null
+          student_email: string | null
+          student_id: string | null
+          student_name: string | null
+          student_rate: number | null
+          void_reason: string | null
+          voided_at: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enrollments_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "class_catalog"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "enrollments_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "class_list"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "enrollments_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "enrollments_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "enrollments_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "student_enrollment_list"
+            referencedColumns: ["student_id"]
+          },
+        ]
+      }
+      logbook_list: {
+        Row: {
+          class_id: string | null
+          class_name: string | null
+          entries_count: number | null
+          id: string | null
+          month: string | null
+          status: Database["public"]["Enums"]["logbook_status"] | null
+          submitted_at: string | null
+          tutor_id: string | null
+          tutor_name: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "classes_tutor_id_fkey"
+            columns: ["tutor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "classes_tutor_id_fkey"
+            columns: ["tutor_id"]
+            isOneToOne: false
+            referencedRelation: "student_enrollment_list"
+            referencedColumns: ["student_id"]
+          },
+          {
+            foreignKeyName: "logbooks_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "class_catalog"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "logbooks_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "class_list"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "logbooks_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      logbook_progress: {
+        Row: {
+          class_id: string | null
+          class_name: string | null
+          entries_missing: number | null
+          entries_written: number | null
+          lessons_total: number | null
+          lessons_unfinished: number | null
+          logbook_id: string | null
+          logbook_status: Database["public"]["Enums"]["logbook_status"] | null
+          month: string | null
+          review_note: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lessons_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "class_catalog"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lessons_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "class_list"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lessons_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      student_enrollment_list: {
+        Row: {
+          class_id: string | null
+          class_name: string | null
+          email: string | null
+          enrollment_id: string | null
+          enrollment_status:
+            | Database["public"]["Enums"]["enrollment_status"]
+            | null
+          full_name: string | null
+          student_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enrollments_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "class_catalog"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "enrollments_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "class_list"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "enrollments_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tutor_stats: {
+        Row: {
+          classes: number | null
+          entries_to_write: number | null
+          next_lesson_end: string | null
+          next_lesson_start: string | null
+          total_earned: number | null
+          upcoming_lessons: number | null
         }
         Relationships: []
       }

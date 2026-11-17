@@ -73,13 +73,13 @@ select is(public.attach_payment_proof(:'alya_invoice', :'alya_path_2'), :'alya_p
 select is((select proof_path from public.invoices where id = :'alya_invoice'), :'alya_path_2', 'the invoice points at the new file');
 
 -- Who can see the files
-select is((select count(*) from storage.objects where bucket_id = 'payment-proofs'), 2::bigint, 'the owner sees their own files');
+select is((select count(*) from storage.objects where bucket_id = 'payment-proofs' and name like '%/' || :'alya_invoice' || '/%'), 2::bigint, 'the owner sees their own files');
 select pg_temp.act_as('c0000000-0000-4000-8000-000000000002');
-select is((select count(*) from storage.objects where bucket_id = 'payment-proofs'), 0::bigint, 'another student sees none of them');
+select is((select count(*) from storage.objects where bucket_id = 'payment-proofs' and name like '%/' || :'alya_invoice' || '/%'), 0::bigint, 'another student sees none of them');
 select pg_temp.act_as('b0000000-0000-4000-8000-000000000001');
-select is((select count(*) from storage.objects where bucket_id = 'payment-proofs'), 0::bigint, 'a tutor sees none of them');
+select is((select count(*) from storage.objects where bucket_id = 'payment-proofs' and name like '%/' || :'alya_invoice' || '/%'), 0::bigint, 'a tutor sees none of them');
 select pg_temp.act_as('a0000000-0000-4000-8000-000000000001');
-select is((select count(*) from storage.objects where bucket_id = 'payment-proofs'), 2::bigint, 'an admin sees all of them');
+select is((select count(*) from storage.objects where bucket_id = 'payment-proofs' and name like '%/' || :'alya_invoice' || '/%'), 2::bigint, 'an admin sees all of them');
 select throws_ok(
   format($$select public.attach_payment_proof(%L, %L)$$, :'alya_invoice', :'alya_path'),
   '42501', null, 'an admin cannot attach a proof');
@@ -88,7 +88,7 @@ select pg_temp.act_as('c0000000-0000-4000-8000-000000000001');
 select lives_ok(
   format($$delete from storage.objects where bucket_id = 'payment-proofs' and name = %L$$, :'alya_path'),
   'a student can delete the file they replaced');
-select is((select count(*) from storage.objects where bucket_id = 'payment-proofs'), 1::bigint, 'and only the new file is left');
+select is((select count(*) from storage.objects where bucket_id = 'payment-proofs' and name like '%/' || :'alya_invoice' || '/%'), 1::bigint, 'and only the new file is left');
 
 -- The proof is optional: an admin approves an invoice that has none
 select pg_temp.act_as('a0000000-0000-4000-8000-000000000001');
