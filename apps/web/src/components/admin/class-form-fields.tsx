@@ -1,6 +1,10 @@
 import { searchTutors } from "@/app/admin/options";
 import { Combobox } from "@/components/ui/combobox";
 import { Field, Input, Textarea } from "@/components/ui/field";
+import { NumberInput } from "@/components/ui/number-input";
+
+const RATE_STEP = 10_000;
+const MAX_RATE = 10_000_000;
 
 type ClassDefaults = {
   name?: string;
@@ -52,44 +56,53 @@ export function ClassFormFields({ idPrefix, defaults = {} }: ClassFormFieldsProp
           required
         />
       </Field>
-      <div className="grid gap-4 sm:grid-cols-3">
-        <Field label="Seats" htmlFor={id("capacity")} hint="Maximum students">
-          <Input
-            id={id("capacity")}
-            name="capacity"
-            type="number"
-            inputMode="numeric"
-            min={1}
-            max={100}
-            defaultValue={defaults.capacity}
-            required
-          />
-        </Field>
-        <Field label="Student rate" htmlFor={id("studentRate")} hint="Rupiah per hour">
-          <Input
-            id={id("studentRate")}
-            name="studentRate"
-            type="number"
-            inputMode="numeric"
-            min={1}
-            max={10000000}
-            defaultValue={defaults.studentRate}
-            required
-          />
-        </Field>
-        <Field label="Tutor rate" htmlFor={id("tutorRate")} hint="Rupiah per hour">
-          <Input
-            id={id("tutorRate")}
-            name="tutorRate"
-            type="number"
-            inputMode="numeric"
-            min={1}
-            max={10000000}
-            defaultValue={defaults.tutorRate}
-            required
-          />
-        </Field>
-      </div>
+      <Field label="Seats" htmlFor={id("capacity")} hint="The most students this class can have.">
+        <NumberInput
+          id={id("capacity")}
+          name="capacity"
+          min={1}
+          max={100}
+          suffix="students"
+          defaultValue={defaults.capacity}
+          required
+        />
+      </Field>
+      <Field
+        label="Student rate"
+        htmlFor={id("studentRate")}
+        hint="What a student pays for each hour. Use + and − to change it by Rp10.000."
+      >
+        <NumberInput
+          id={id("studentRate")}
+          name="studentRate"
+          min={RATE_STEP}
+          max={MAX_RATE}
+          step={RATE_STEP}
+          prefix="Rp"
+          suffix="/ hour"
+          placeholder="150.000"
+          defaultValue={defaults.studentRate}
+          required
+        />
+      </Field>
+      <Field
+        label="Tutor rate"
+        htmlFor={id("tutorRate")}
+        hint="What the tutor earns for each lesson hour."
+      >
+        <NumberInput
+          id={id("tutorRate")}
+          name="tutorRate"
+          min={RATE_STEP}
+          max={MAX_RATE}
+          step={RATE_STEP}
+          prefix="Rp"
+          suffix="/ hour"
+          placeholder="100.000"
+          defaultValue={defaults.tutorRate}
+          required
+        />
+      </Field>
     </>
   );
 }

@@ -1,14 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { Field, Input } from "@/components/ui/field";
+import { Field } from "@/components/ui/field";
+import { NumberInput } from "@/components/ui/number-input";
 import { formatRupiah } from "@/lib/format";
 
 const presets = [6, 12, 24];
 
 export function HoursPicker({ rate }: { rate: number }) {
-  const [hours, setHours] = useState(12);
-  const valid = Number.isInteger(hours) && hours >= 1;
+  const [hours, setHours] = useState<number | null>(12);
+  const total = hours !== null && hours >= 1 ? hours * rate : null;
 
   return (
     <div className="space-y-4">
@@ -32,24 +33,24 @@ export function HoursPicker({ rate }: { rate: number }) {
         </div>
       </fieldset>
 
-      <Field label="Or type a different number" htmlFor="hours" hint="Between 1 and 200 hours.">
-        <Input
+      <Field label="Or choose another number" htmlFor="hours" hint="Between 1 and 200 hours.">
+        <NumberInput
+          id="hours"
           name="hours"
-          type="number"
           min={1}
           max={200}
-          step={1}
+          suffix="hours"
           required
-          value={Number.isNaN(hours) ? "" : hours}
-          onChange={(event) => setHours(event.target.valueAsNumber)}
+          value={hours}
+          onValueChange={setHours}
         />
       </Field>
 
       <div className="rounded-card bg-gold/20 p-4">
         <p className="text-muted text-sm">
-          {valid ? `${hours} hours × ${formatRupiah(rate)}` : "Choose the number of hours"}
+          {total !== null ? `${hours} hours × ${formatRupiah(rate)}` : "Choose the number of hours"}
         </p>
-        <p className="text-xl font-bold">Total: {valid ? formatRupiah(hours * rate) : "—"}</p>
+        <p className="text-xl font-bold">Total: {total !== null ? formatRupiah(total) : "—"}</p>
       </div>
     </div>
   );

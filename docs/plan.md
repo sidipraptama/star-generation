@@ -19,6 +19,7 @@ Single-day build. Rules are enforced in the database first, the UI follows. Each
 | 12 | Docker Compose | one command runs db, auth, API, gateway and the app; tests run in Docker | done |
 | 13 | Calendar and recurring lessons | weekly recurring lessons and series cancel (DB), week and month calendar, schedule pages and overview strips for all roles | done |
 | 14 | Fixed sidebar and combobox | pinned sidebar, searchable dropdown with paged server-side options replacing every native select | done |
+| 15 | Clearer number fields | `Rp` prefix, unit suffix, thousands separators and − / + steppers (Rp10.000 for rates) on rates, seats and hours | done |
 
 ## Verification
 
