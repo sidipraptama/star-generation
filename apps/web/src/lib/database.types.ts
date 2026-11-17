@@ -7,31 +7,6 @@ export type Json =
   | Json[]
 
 export type Database = {
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
       class_student_rates: {
@@ -371,6 +346,7 @@ export type Database = {
           created_at: string
           end_at: string
           id: string
+          series_id: string | null
           start_at: string
           status: Database["public"]["Enums"]["lesson_status"]
           tutor_id: string
@@ -382,6 +358,7 @@ export type Database = {
           created_at?: string
           end_at: string
           id?: string
+          series_id?: string | null
           start_at: string
           status?: Database["public"]["Enums"]["lesson_status"]
           tutor_id: string
@@ -393,6 +370,7 @@ export type Database = {
           created_at?: string
           end_at?: string
           id?: string
+          series_id?: string | null
           start_at?: string
           status?: Database["public"]["Enums"]["lesson_status"]
           tutor_id?: string
@@ -627,6 +605,10 @@ export type Database = {
         Args: { p_lesson_id: string; p_reason?: string }
         Returns: undefined
       }
+      cancel_lesson_series: {
+        Args: { p_lesson_id: string; p_reason?: string }
+        Returns: number
+      }
       create_class: {
         Args: {
           p_capacity: number
@@ -674,6 +656,17 @@ export type Database = {
       schedule_lesson: {
         Args: { p_class_id: string; p_end_at: string; p_start_at: string }
         Returns: string
+      }
+      schedule_lessons_weekly: {
+        Args: {
+          p_class_id: string
+          p_end_time: string
+          p_first_date: string
+          p_start_time: string
+          p_until_date: string
+          p_weekdays: number[]
+        }
+        Returns: number
       }
       submit_logbook: { Args: { p_logbook_id: string }; Returns: undefined }
       update_class: {
@@ -824,9 +817,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
       app_role: ["admin", "tutor", "student"],
@@ -837,4 +827,3 @@ export const Constants = {
     },
   },
 } as const
-

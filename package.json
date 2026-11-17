@@ -17,6 +17,6 @@
     "db:reset": "docker compose down -v && pnpm db:start",
     "db:test": "docker compose run --rm test",
     "db:demo": "docker compose exec -T db psql -U postgres -d postgres -v ON_ERROR_STOP=1 < supabase/demo.sql",
-    "db:types": "supabase gen types typescript --db-url postgresql://postgres:postgres@127.0.0.1:54322/postgres > apps/web/src/lib/database.types.ts"
+    "db:types": "docker compose run --rm -T types > apps/web/src/lib/database.types.ts.tmp && mv apps/web/src/lib/database.types.ts.tmp apps/web/src/lib/database.types.ts"
   }
 }

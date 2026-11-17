@@ -120,5 +120,19 @@ services:
     volumes:
       - ./supabase/tests/database:/tests:ro
 
+  # Prints src/lib/database.types.ts to stdout: pnpm db:types
+  types:
+    profiles: ["tools"]
+    image: public.ecr.aws/supabase/postgres-meta:v0.93.1
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      PG_META_DB_URL: postgres://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/postgres
+      PG_META_PORT: "8080"
+    entrypoint: ["node", "/gen-types.js"]
+    volumes:
+      - ./docker/gen-types.js:/gen-types.js:ro
+
 volumes:
   db-data:
