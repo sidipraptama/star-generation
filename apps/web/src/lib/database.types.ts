@@ -241,6 +241,8 @@ export type Database = {
           paid_at: string | null
           paid_by: string | null
           payment_reference: string | null
+          proof_path: string | null
+          proof_uploaded_at: string | null
           status: Database["public"]["Enums"]["invoice_status"]
           student_rate: number
           void_reason: string | null
@@ -256,6 +258,8 @@ export type Database = {
           paid_at?: string | null
           paid_by?: string | null
           payment_reference?: string | null
+          proof_path?: string | null
+          proof_uploaded_at?: string | null
           status?: Database["public"]["Enums"]["invoice_status"]
           student_rate: number
           void_reason?: string | null
@@ -271,6 +275,8 @@ export type Database = {
           paid_at?: string | null
           paid_by?: string | null
           payment_reference?: string | null
+          proof_path?: string | null
+          proof_uploaded_at?: string | null
           status?: Database["public"]["Enums"]["invoice_status"]
           student_rate?: number
           void_reason?: string | null
@@ -598,9 +604,20 @@ export type Database = {
           },
         ]
       }
+      invoice_approvals: {
+        Row: {
+          approved_by: string | null
+          invoice_id: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       approve_logbook: { Args: { p_logbook_id: string }; Returns: undefined }
+      attach_payment_proof: {
+        Args: { p_invoice_id: string; p_path: string }
+        Returns: string
+      }
       cancel_lesson: {
         Args: { p_lesson_id: string; p_reason?: string }
         Returns: undefined

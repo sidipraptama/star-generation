@@ -1,11 +1,13 @@
 name: star-generation
 
-# Local stack only. The JWT secret and anon key below are public demo values; override all three
-# variables (POSTGRES_PASSWORD, JWT_SECRET, ANON_KEY) for anything that is not your own machine.
+# Local stack only. The JWT secret and the anon and service keys below are public demo values;
+# override all four variables (POSTGRES_PASSWORD, JWT_SECRET, ANON_KEY, SERVICE_ROLE_KEY) for
+# anything that is not your own machine.
 
 x-postgres-password: &postgres-password ${POSTGRES_PASSWORD:-postgres}
 x-jwt-secret: &jwt-secret ${JWT_SECRET:-star-generation-local-jwt-secret-do-not-use-in-production}
 x-anon-key: &anon-key ${ANON_KEY:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN0YXItZ2VuZXJhdGlvbi1sb2NhbCIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjo0MTAyNDQ0ODAwfQ.ARuedOE0-kuhEE-fkxnolshtptNvWgKybrAJ06hU_48}
+x-service-key: &service-key ${SERVICE_ROLE_KEY:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic2VydmljZV9yb2xlIiwiaXNzIjoic3Rhci1nZW5lcmF0aW9uLWxvY2FsIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjQxMDI0NDQ4MDB9.LxSaFD4DvPWJOQCTz1OJqaDrj2E8Sd9N1jCvUXrcCmg}
 
 services:
   db:
@@ -50,12 +52,42 @@ services:
       timeout: 5s
       retries: 30
 
+  # File storage (private buckets for uploads). It creates the storage schema on first start, so the
+  # migrations below wait for it.
+  storage:
+    image: public.ecr.aws/supabase/storage-api:v1.29.0
+    depends_on:
+      auth:
+        condition: service_healthy
+    environment:
+      ANON_KEY: *anon-key
+      SERVICE_KEY: *service-key
+      POSTGREST_URL: http://rest:3000
+      PGRST_JWT_SECRET: *jwt-secret
+      DATABASE_URL: postgres://supabase_storage_admin:${POSTGRES_PASSWORD:-postgres}@db:5432/postgres
+      FILE_SIZE_LIMIT: "10485760"
+      STORAGE_BACKEND: file
+      FILE_STORAGE_BACKEND_PATH: /var/lib/storage
+      TENANT_ID: star-generation
+      REGION: local
+      GLOBAL_S3_BUCKET: local
+      ENABLE_IMAGE_TRANSFORMATION: "false"
+    volumes:
+      - storage-data:/var/lib/storage
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:5000/status"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
   # Applies supabase/migrations once and loads supabase/seed.sql on an empty database. It has to run
   # after auth, because the seed inserts into tables that GoTrue creates.
   migrate:
     image: public.ecr.aws/supabase/postgres:17.6.1.043
     depends_on:
       auth:
+        condition: service_healthy
+      storage:
         condition: service_healthy
     restart: "no"
     environment:
@@ -78,12 +110,13 @@ services:
       PGRST_JWT_SECRET: *jwt-secret
     command: ["postgrest"]
 
-  # One public URL for the API, like the Supabase CLI: /auth/v1 and /rest/v1.
+  # One public URL for the API, like the Supabase CLI: /auth/v1, /rest/v1 and /storage/v1.
   gateway:
     image: nginx:1.27-alpine
     depends_on:
       - auth
       - rest
+      - storage
     ports:
       - "54321:8000"
     volumes:
@@ -136,3 +169,4 @@ services:
 
 volumes:
   db-data:
+  storage-data:
