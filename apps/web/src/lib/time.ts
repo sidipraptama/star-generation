@@ -22,3 +22,13 @@ export function todayInWib() {
 export function isPast(instant: string) {
   return new Date(instant).getTime() <= Date.now();
 }
+
+/** Calendar date (YYYY-MM-DD) of an instant in WIB. */
+export function wibDateOf(instant: string | Date) {
+  return shiftToWib(instant).toISOString().slice(0, 10);
+}
+
+export function wibMinutesOfDay(instant: string | Date) {
+  const shifted = shiftToWib(instant);
+  return shifted.getUTCHours() * 60 + shifted.getUTCMinutes();
+}

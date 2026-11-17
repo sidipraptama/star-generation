@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import { Alert } from "@/components/ui/alert";
 import type { ActionState } from "@/lib/action";
 
@@ -13,10 +13,15 @@ type ActionFormProps = {
 
 export function ActionForm({ action, onSuccess, className, children }: ActionFormProps) {
   const [state, formAction] = useActionState(action, null);
+  const onSuccessRef = useRef(onSuccess);
 
   useEffect(() => {
-    if (state?.ok) onSuccess?.();
-  }, [state, onSuccess]);
+    onSuccessRef.current = onSuccess;
+  });
+
+  useEffect(() => {
+    if (state?.ok) onSuccessRef.current?.();
+  }, [state]);
 
   return (
     <form action={formAction} className={className}>
