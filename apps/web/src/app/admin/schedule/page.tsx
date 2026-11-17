@@ -1,114 +1,95 @@
 import type { Metadata } from "next";
-import { CalendarDays } from "lucide-react";
-import { CancelLessonDialog } from "@/components/admin/cancel-lesson-dialog";
-import { LessonStatus } from "@/components/admin/lesson-status";
-import { Panel, Section } from "@/components/admin/section";
-import { EmptyState } from "@/components/ui/empty-state";
+import { LessonDetailDialog } from "@/components/admin/lesson-detail-dialog";
+import { AutoSubmitForm } from "@/components/calendar/filters";
+import { ScheduleCalendar } from "@/components/calendar/schedule-calendar";
+import { Select } from "@/components/ui/field";
 import { PageHeader } from "@/components/ui/page-header";
-import { Table, Td, Th } from "@/components/ui/table";
-import { formatLessonWhen } from "@/lib/format";
+import { buildHref, parseCalendarParams, visibleRange } from "@/lib/calendar";
 import { createClient } from "@/lib/supabase/server";
-import { isPast } from "@/lib/time";
+import { todayInWib } from "@/lib/time";
+import { getLessonChips, getLessonDetail, scheduleLegend, uuidOrUndefined } from "./data";
 
 export const metadata: Metadata = { title: "Schedule" };
 
-export default async function SchedulePage() {
+type SearchParams = Record<string, string | string[] | undefined>;
+
+const text = (value: string | string[] | undefined) =>
+  typeof value === "string" ? value : undefined;
+
+export default async function SchedulePage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  const raw = await searchParams;
+  const today = todayInWib();
+  const { view, date } = parseCalendarParams({ view: text(raw.view), date: text(raw.date) }, today);
+  const filters = {
+    tutor: uuidOrUndefined(text(raw.tutor)),
+    class: uuidOrUndefined(text(raw.class)),
+  };
+  const lessonId = uuidOrUndefined(text(raw.lesson));
+  const { from, to } = visibleRange(view, date);
+
   const db = await createClient();
-
-  const { data } = await db
-    .from("lessons")
-    .select(
-      "id, start_at, end_at, status, classes(name), profiles!lessons_tutor_id_fkey(full_name)",
-    )
-    .order("start_at");
-
-  const lessons = data ?? [];
-  const upcoming = lessons.filter(
-    (lesson) => lesson.status === "scheduled" && !isPast(lesson.end_at),
-  );
-  const past = lessons.filter((lesson) => !upcoming.includes(lesson)).reverse();
+  const [chips, tutors, classes, lesson] = await Promise.all([
+    getLessonChips(from, to, filters),
+    db.from("profiles").select("id, full_name").eq("role", "tutor").order("full_name"),
+    db.from("classes").select("id, name").order("name"),
+    lessonId ? getLessonDetail(lessonId) : null,
+  ]);
 
   return (
     <>
       <PageHeader
         title="Schedule"
-        description="Every lesson across all classes. Times are in WIB."
+        description="Every lesson across all classes. Click a lesson to see its details or cancel it. Times are in WIB."
       />
 
-      {lessons.length === 0 ? (
-        <Panel>
-          <EmptyState
-            icon={CalendarDays}
-            title="No lessons yet"
-            description="Lessons appear here once tutors schedule them."
-          />
-        </Panel>
-      ) : (
-        <>
-          <Section title="Upcoming" description="Lessons that have not finished yet.">
-            <LessonTable lessons={upcoming} empty="No upcoming lessons are scheduled." />
-          </Section>
-          <Section
-            title="Past and cancelled"
-            description="If a lesson did not take place, cancel it so students are not charged."
-          >
-            <LessonTable lessons={past} empty="No past lessons yet." />
-          </Section>
-        </>
+      <ScheduleCalendar
+        view={view}
+        date={date}
+        today={today}
+        basePath="/admin/schedule"
+        params={filters}
+        chips={chips}
+        legend={scheduleLegend}
+        filters={
+          <AutoSubmitForm action="/admin/schedule" className="flex flex-wrap gap-3">
+            <input type="hidden" name="view" value={view} />
+            <input type="hidden" name="date" value={date} />
+            <label htmlFor="tutor" className="sr-only">
+              Filter by tutor
+            </label>
+            <Select name="tutor" defaultValue={filters.tutor ?? ""} className="w-auto min-w-48">
+              <option value="">All tutors</option>
+              {(tutors.data ?? []).map((tutor) => (
+                <option key={tutor.id} value={tutor.id}>
+                  {tutor.full_name}
+                </option>
+              ))}
+            </Select>
+            <label htmlFor="class" className="sr-only">
+              Filter by class
+            </label>
+            <Select name="class" defaultValue={filters.class ?? ""} className="w-auto min-w-48">
+              <option value="">All classes</option>
+              {(classes.data ?? []).map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.name}
+                </option>
+              ))}
+            </Select>
+          </AutoSubmitForm>
+        }
+      />
+
+      {lesson && (
+        <LessonDetailDialog
+          lesson={lesson}
+          closeHref={buildHref("/admin/schedule", { ...filters, view, date })}
+        />
       )}
     </>
-  );
-}
-
-type LessonRow = {
-  id: string;
-  start_at: string;
-  end_at: string;
-  status: "scheduled" | "cancelled";
-  classes: { name: string };
-  profiles: { full_name: string };
-};
-
-function LessonTable({ lessons, empty }: { lessons: LessonRow[]; empty: string }) {
-  if (lessons.length === 0) {
-    return (
-      <Panel>
-        <p className="text-muted px-5 py-6 text-center text-sm">{empty}</p>
-      </Panel>
-    );
-  }
-
-  return (
-    <Table>
-      <thead>
-        <tr>
-          <Th>When</Th>
-          <Th>Class</Th>
-          <Th>Tutor</Th>
-          <Th>Status</Th>
-          <Th />
-        </tr>
-      </thead>
-      <tbody>
-        {lessons.map((lesson) => {
-          const when = formatLessonWhen(lesson.start_at, lesson.end_at);
-          return (
-            <tr key={lesson.id}>
-              <Td className="font-semibold whitespace-nowrap">{when}</Td>
-              <Td>{lesson.classes.name}</Td>
-              <Td>{lesson.profiles.full_name}</Td>
-              <Td>
-                <LessonStatus status={lesson.status} endAt={lesson.end_at} />
-              </Td>
-              <Td className="text-right">
-                {lesson.status === "scheduled" && (
-                  <CancelLessonDialog lessonId={lesson.id} when={when} />
-                )}
-              </Td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </Table>
   );
 }

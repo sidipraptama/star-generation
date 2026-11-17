@@ -2,42 +2,54 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { BookOpen, CircleCheck, NotebookPen, Receipt, Users } from "lucide-react";
 import { MarkPaidDialog } from "@/components/admin/mark-paid-dialog";
+import { WeekStrip } from "@/components/calendar/week-strip";
 import { Card } from "@/components/ui/card";
 import { ButtonLink } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { Stat } from "@/components/ui/stat";
+import { addDays, buildHref, weekStart } from "@/lib/calendar";
 import { formatDate, formatMonth, formatRupiah } from "@/lib/format";
 import { createClient } from "@/lib/supabase/server";
+import { todayInWib } from "@/lib/time";
+import { getLessonChips, scheduleLegend } from "./schedule/data";
 
 export const metadata: Metadata = { title: "Overview" };
 
 export default async function AdminOverviewPage() {
   const db = await createClient();
+  const today = todayInWib();
+  const thisWeek = weekStart(today);
 
-  const [unpaidCount, reviewCount, activeEnrollments, classCount, unpaidInvoices, logbooks] =
-    await Promise.all([
-      db.from("invoices").select("id", { count: "exact", head: true }).eq("status", "unpaid"),
-      db.from("logbooks").select("id", { count: "exact", head: true }).eq("status", "submitted"),
-      db.from("enrollments").select("student_id").eq("status", "active"),
-      db.from("classes").select("id", { count: "exact", head: true }),
-      db
-        .from("invoices")
-        .select(
-          "id, hours, student_rate, issued_at, enrollments(profiles(full_name), classes(name))",
-        )
-        .eq("status", "unpaid")
-        .order("issued_at")
-        .limit(5),
-      db
-        .from("logbooks")
-        .select(
-          "id, month, classes(name, profiles!classes_tutor_id_fkey(full_name)), logbook_entries(count)",
-        )
-        .eq("status", "submitted")
-        .order("submitted_at")
-        .limit(5),
-    ]);
+  const [
+    unpaidCount,
+    reviewCount,
+    activeEnrollments,
+    classCount,
+    unpaidInvoices,
+    logbooks,
+    weekChips,
+  ] = await Promise.all([
+    db.from("invoices").select("id", { count: "exact", head: true }).eq("status", "unpaid"),
+    db.from("logbooks").select("id", { count: "exact", head: true }).eq("status", "submitted"),
+    db.from("enrollments").select("student_id").eq("status", "active"),
+    db.from("classes").select("id", { count: "exact", head: true }),
+    db
+      .from("invoices")
+      .select("id, hours, student_rate, issued_at, enrollments(profiles(full_name), classes(name))")
+      .eq("status", "unpaid")
+      .order("issued_at")
+      .limit(5),
+    db
+      .from("logbooks")
+      .select(
+        "id, month, classes(name, profiles!classes_tutor_id_fkey(full_name)), logbook_entries(count)",
+      )
+      .eq("status", "submitted")
+      .order("submitted_at")
+      .limit(5),
+    getLessonChips(thisWeek, addDays(thisWeek, 7)),
+  ]);
 
   const activeStudents = new Set(activeEnrollments.data?.map((row) => row.student_id)).size;
   const invoices = unpaidInvoices.data ?? [];
@@ -147,6 +159,16 @@ export default async function AdminOverviewPage() {
           </Card>
         </div>
       )}
+
+      <div className="mt-10">
+        <WeekStrip
+          today={today}
+          chips={weekChips}
+          legend={scheduleLegend}
+          scheduleHref="/admin/schedule"
+          chipHref={(id) => buildHref("/admin/schedule", { view: "week", date: today, lesson: id })}
+        />
+      </div>
     </>
   );
 }

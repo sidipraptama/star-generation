@@ -86,6 +86,12 @@ export async function cancelLesson(_: ActionState, formData: FormData) {
   );
 }
 
+export async function cancelLessonSeries(_: ActionState, formData: FormData) {
+  return rpcAction(formData, z.object({ lessonId: id, reason: optionalText }), (db, v) =>
+    db.rpc("cancel_lesson_series", { p_lesson_id: v.lessonId, p_reason: v.reason || undefined }),
+  );
+}
+
 export async function approveLogbook(_: ActionState, formData: FormData) {
   return rpcAction(formData, z.object({ logbookId: id }), (db, v) =>
     db.rpc("approve_logbook", { p_logbook_id: v.logbookId }),
