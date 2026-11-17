@@ -44,6 +44,8 @@ Each open decision from the brief: what I chose, how the system enforces it, and
 
 **Proof of payment (optional).** A student can attach a photo or screenshot of the transfer to an invoice that is still waiting for payment, and replace it until it is paid. It is never required: an admin can approve an invoice with or without one, and the class opens either way. The admin sees the proof in the invoice table and in the Mark as paid dialog, and every paid invoice shows **Approved by** the admin's name to both the admin and the student. After payment the proof is kept and can no longer be changed ([ADR 0010](adr/0010-payment-proofs-in-private-storage.md)).
 
+**Cancelling a paid invoice** is only possible while the student still has its hours, so the admin list works that out up front: the button is disabled and says why ("the student has already used some of these hours, 3h left of 12h") instead of failing after a click.
+
 **Enforced by.** `mark_invoice_paid()` and `void_invoice()`, which check the role, lock the invoice and reuse the ledger to test "hours already used". `attach_payment_proof()` and the storage policies decide who can add and read a proof.
 
 ## Improvements

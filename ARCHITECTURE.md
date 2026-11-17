@@ -46,6 +46,8 @@ Derived, not stored: `hour_ledger` and `enrollment_balances` (purchases minus de
 | Tutors never see student rates; only admin and the tutor see earnings | rates and earnings in separate tables with their own policies, [ADR 0002](docs/adr/0002-visibility-with-rls.md) |
 | A payment proof is optional; only the owner adds one to an unpaid invoice; only the owner and admins read it | private bucket with storage policies, `attach_payment_proof()`, [ADR 0010](docs/adr/0010-payment-proofs-in-private-storage.md) |
 | Who approved a payment | `invoices.paid_by`, shown through the `invoice_approvals` view that exposes only the name |
+| A paid invoice can only be cancelled while its hours are unused, and the button says so up front | `void_invoice()` for the rule, `invoice_list.can_cancel` for the early answer |
+| Lists stay fast with thousands of rows | flat `security_invoker` views, trigram and foreign key indexes, paging in the query, [ADR 0011](docs/adr/0011-lists-searched-and-paged-in-the-database.md) |
 | Only the write paths above exist | `insert/update/delete` revoked from `anon` and `authenticated` |
 
 pgTAP tests in `supabase/tests/database` impersonate each seeded user to prove these rules.
@@ -64,6 +66,7 @@ pgTAP tests in `supabase/tests/database` impersonate each seeded user to prove t
 - `components/ui` is a small hand-written kit: `Button`, `Card`, `Table`, `Badge` / `StatusBadge` (one place maps every status to a label, tone and icon), `Field` controls, `Alert`, `EmptyState`, `Stat`, `HoursMeter`, and the calendar parts (`ScheduleCalendar`, `WeekStrip`).
 - `Combobox` replaces native selects: searchable, with either a fixed list or options loaded one page at a time while you scroll ([ADR 0008](docs/adr/0008-combobox-with-paged-options.md)).
 - `DatePicker`, `TimePicker` and `NumberInput` complete the set of fields, built on the same popover panel as the combobox (`components/ui/picker.tsx`, [ADR 0009](docs/adr/0009-date-time-and-number-fields.md)). Dates stay `YYYY-MM-DD` and times 24-hour `HH:mm` (WIB), and rates show an `Rp` prefix, thousands separators and steps of Rp10.000. They submit plain values, so the server-side validation is unchanged.
+- `components/list` is the list kit: `ListToolbar` (search that runs while you type, plus filter comboboxes), `Pagination` and `NoResults`. Every list is searched, filtered and paged in the database through flat views, with the state in the URL ([ADR 0011](docs/adr/0011-lists-searched-and-paged-in-the-database.md)).
 - `Table` scrolls sideways when it is wider than the screen. A cell marked `sticky` (the actions column) stays pinned at the right edge from tablet width up, with a shadow while other columns slide beneath it. On phones it scrolls with the row, because the buttons would take most of the screen.
 - Mutations use two patterns: `ActionForm` (inline, shows errors) and `DialogForm` (a confirmation or short form in a native `<dialog>`).
 - `components/layout`: one `AppShell` shared by all roles. The desktop sidebar is pinned to the viewport height, so only the content scrolls; on phones there is a sticky header and bottom tabs.

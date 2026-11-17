@@ -67,7 +67,15 @@ pnpm db:demo
 
 Adds Alya and Dimas as paying students, last month's approved logbook (with tutor earnings), two recent lessons that still need logbook entries, and two lessons next month. Dates are relative to today, so it works on any day. Run `docker compose down -v` and start again to go back to the plain seed.
 
-Open **Schedule** in any role for the week and month calendar. As Budi, click an empty slot to add a lesson or use **Repeat weekly** to create a whole series; as Alya, upcoming lessons that her remaining hours no longer cover are flagged.
+### Optional data at scale
+
+```bash
+pnpm db:bulk
+```
+
+Adds 120 students, 60 classes and about 4,800 invoices, plus lessons, logbooks and earnings, so you can try the search, filters and paging on every list (open the **Invoices** page as Rina and search for "Bulk Student 007"). It is loaded on top of the seed, once. Go back to the plain seed with `docker compose down -v`.
+
+Every list has a search box, filters and pages of 20 rows (12 cards), all done in the database, so it stays fast with thousands of rows. Open **Schedule** in any role for the week and month calendar. As Budi, click an empty slot to add a lesson or use **Repeat weekly** to create a whole series; as Alya, upcoming lessons that her remaining hours no longer cover are flagged.
 
 Invoices can carry an optional proof of payment: as Alya, open **Invoices** and use **Add proof of payment** on an unpaid invoice (JPG, PNG or WebP, up to 5 MB); as Rina, the proof shows in the invoices table and in **Mark as paid**, and a paid invoice shows who approved it.
 
@@ -84,6 +92,7 @@ A good walkthrough: sign in as Budi, write entries for the two recent lessons, s
 | `pnpm db:start`               | Start only the backend services in the background                     |
 | `pnpm db:reset`               | Wipe the data and start the backend again with a fresh seed           |
 | `pnpm db:demo`                | Load the optional demo history                                        |
+| `pnpm db:bulk`                | Load the optional data at scale (about 4,800 invoices)                |
 | `pnpm db:types`               | Regenerate `apps/web/src/lib/database.types.ts` from the database (in Docker) |
 
 The [Supabase CLI](https://supabase.com/docs/guides/cli) is optional: `supabase/config.toml` still works with `supabase start` if you prefer it (pass its publishable key as `SUPABASE_ANON_KEY`). Nothing in the normal workflow needs it.
