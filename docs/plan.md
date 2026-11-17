@@ -17,6 +17,7 @@ Single-day build. Rules are enforced in the database first, the UI follows. Each
 | 10 | Student views | catalog and enrollment, my classes, invoices, hours, logbooks | done |
 | 11 | Docs and hardening | README, ARCHITECTURE, DECISIONS, end-to-end manual pass | done |
 | 12 | Docker Compose | one command runs db, auth, API, gateway and the app; tests run in Docker | done |
+| 13 | Calendar and recurring lessons | weekly recurring lessons and series cancel (DB), week and month calendar, schedule pages and overview strips for all roles | in progress |
 
 ## Verification
 

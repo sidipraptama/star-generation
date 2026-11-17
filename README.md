@@ -65,6 +65,8 @@ pnpm db:demo
 
 Adds Alya and Dimas as paying students, last month's approved logbook (with tutor earnings), two recent lessons that still need logbook entries, and two lessons next month. Dates are relative to today, so it works on any day. Run `docker compose down -v` and start again to go back to the plain seed.
 
+Open **Schedule** in any role for the week and month calendar. As Budi, click an empty slot to add a lesson or use **Repeat weekly** to create a whole series; as Alya, upcoming lessons that her remaining hours no longer cover are flagged.
+
 A good walkthrough: sign in as Budi, write entries for the two recent lessons, submit the logbook (all lessons of the month must have ended and have an entry), then sign in as Rina to preview the earnings and approve it, and finally as Alya to read it.
 
 ## Tests and commands
@@ -78,9 +80,9 @@ A good walkthrough: sign in as Budi, write entries for the two recent lessons, s
 | `pnpm db:start`               | Start only the backend services in the background                     |
 | `pnpm db:reset`               | Wipe the data and start the backend again with a fresh seed           |
 | `pnpm db:demo`                | Load the optional demo history                                        |
-| `pnpm db:types`               | Regenerate `apps/web/src/lib/database.types.ts` (needs the Supabase CLI) |
+| `pnpm db:types`               | Regenerate `apps/web/src/lib/database.types.ts` from the database (in Docker) |
 
-The [Supabase CLI](https://supabase.com/docs/guides/cli) is optional: `supabase/config.toml` still works with `supabase start` if you prefer it (pass its publishable key as `SUPABASE_ANON_KEY`).
+The [Supabase CLI](https://supabase.com/docs/guides/cli) is optional: `supabase/config.toml` still works with `supabase start` if you prefer it (pass its publishable key as `SUPABASE_ANON_KEY`). Nothing in the normal workflow needs it.
 
 ## Repository layout
 

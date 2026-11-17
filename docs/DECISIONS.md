@@ -46,7 +46,38 @@ Each open decision from the brief: what I chose, how the system enforces it, and
 
 ## Improvements
 
-Chosen improvements will be written here once agreed.
+### 1. A schedule you can act on: calendar, weekly recurring lessons, hours forecast
+
+**The problem.** Today schedules live in spreadsheets and WhatsApp. Three things from the brief go wrong there:
+
+- Admins cannot easily tell whether a finished lesson already has its logbook entry, and they review logbooks before they are shared.
+- Tutors enter every lesson one by one, month after month, for classes that repeat weekly.
+- Students and admins find out about "hours left" only after the hours are gone.
+
+**What it does.**
+
+- **One calendar for all three roles** with a Week view (default, with an hour grid) and a Month view, in WIB, plus a "This week" strip on each overview. On a phone it becomes a day-by-day list. Colours always come with a text label ("Entry needed", "Cancelled"), and there is a legend.
+- **Admin and tutor:** finished lessons without a logbook entry are flagged "Entry needed"; the admin can filter by tutor and class.
+- **Tutor:** click an empty slot to add a lesson, or "Repeat weekly": choose weekdays, a time and a last date, and the form shows how many lessons that creates. Cancelling a lesson can cover "this and all following lessons" of its series.
+- **Student:** upcoming lessons that the remaining hours no longer cover are flagged "Not covered by your hours", with a link to add hours. A class with zero hours explains why its upcoming lessons are hidden.
+
+**Who it helps.** Admins get an at-a-glance view of the whole month and of what is missing; tutors save the repetitive scheduling and see overlaps before they happen; students and their parents learn about a shortfall weeks ahead instead of at the lesson.
+
+**Why this one, and not another.**
+
+- A read-only calendar would only repaint the list the schedule page already had. The brief says cosmetic changes alone do not count, so the calendar carries status (entry missing, hours not covering a lesson) and actions (add, repeat, cancel a series).
+- A class profitability board and monthly payout statements are good candidates, but they report on data that already exists. The schedule is where the mistakes are created, so I fixed it at the source. They stay on the next-steps list.
+- A calendar library (FullCalendar and similar) is heavy, hard to theme to the design system and would not know our rules. The calendar is about 400 lines of server-rendered components; the only client code is the dialogs.
+
+**Rules and trade-offs.**
+
+- A recurring series is all or nothing. If one date clashes with the tutor's calendar, falls in a month whose logbook is already submitted or breaks any lesson rule, nothing is created and the message names the date. A partial series with silently missing lessons is worse than fixing one date and retrying.
+- A series is limited to 60 lessons and 6 months.
+- "Cancel this and following" only touches upcoming lessons without a logbook entry, never past or already logged ones.
+- Single and recurring scheduling share `private.add_lesson()`, so they cannot drift apart. The forecast is computed from the same hour ledger the balance uses, in lesson order: the first lesson that does not fit, and every one after it, is flagged.
+- Calendar state lives in the URL (view, date, filters, open lesson), so every view and every dialog is a link that can be shared or reloaded.
+
+**Left out on purpose.** Dragging a lesson to reschedule (needs a full edit-lesson rule set), editing a whole series in place (cancel and recreate instead), recurrence other than weekly weekdays, holiday exceptions, reminders and calendar export, conflict detection for a student across classes, and live updates.
 
 ## What I would build next with another day
 
@@ -54,4 +85,6 @@ Chosen improvements will be written here once agreed.
 - Expire unpaid invoices after a deadline so a seat is not blocked forever.
 - Post-approval corrections as an audited adjustment instead of editing an approved logbook.
 - Payout statements per tutor per month, exportable to CSV.
+- Reschedule a lesson by dragging it, with the rule set that needs (logbook month, overlap, notifying students).
+- Class profitability and monthly payout statements.
 - Browser end-to-end tests for the three role journeys on top of the pgTAP suite.

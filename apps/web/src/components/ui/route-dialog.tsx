@@ -70,16 +70,21 @@ type RouteActionFormProps = {
   children: React.ReactNode;
 };
 
-/** A form with its own buttons inside a RouteDialog; closes the dialog when the action succeeds. */
+/**
+ * A form with its own buttons inside a RouteDialog. The dialog closes from the action itself,
+ * because a successful action often removes the form from the re-rendered page.
+ */
 export function RouteActionForm({ action, closeHref, className, children }: RouteActionFormProps) {
   const router = useRouter();
 
+  async function closeAfter(previous: ActionState, formData: FormData) {
+    const result = await action(previous, formData);
+    if (result?.ok) router.replace(closeHref, { scroll: false });
+    return result;
+  }
+
   return (
-    <ActionForm
-      action={action}
-      onSuccess={() => router.replace(closeHref, { scroll: false })}
-      className={className}
-    >
+    <ActionForm action={closeAfter} className={className}>
       {children}
     </ActionForm>
   );
