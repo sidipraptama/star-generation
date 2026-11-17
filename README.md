@@ -91,10 +91,10 @@ Logbook walkthrough (needs `pnpm db:demo`):
 
 Run with the stack up. Both load on top of the seed. Go back to the plain seed with `docker compose down -v`.
 
-| Command        | Adds                                                                                                                       | Use it to                                                                           |
-| -------------- | -------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `pnpm db:demo` | Alya and Dimas as paying students, last month's approved logbook with earnings, two lessons to log, two lessons next month | Walk through the logbook flow. Dates are relative to today                          |
-| `pnpm db:bulk` | 120 students, 60 classes, about 4,800 invoices, plus lessons, logbooks and earnings                                        | Try search, filters and paging at scale (search "Bulk Student 007" on **Invoices**) |
+| Command        | Adds                                                                                                                       | Use it to                                                                                                                                   |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm db:demo` | Alya and Dimas as paying students, last month's approved logbook with earnings, two lessons to log, two lessons next month | Walk through the logbook flow. Dates are relative to today                                                                                  |
+| `pnpm db:bulk` | 120 students, 60 classes, about 4,800 invoices, plus lessons, logbooks and earnings                                        | Try search, filters and paging at scale (run `db:demo` first to also give Alya 25 old invoices) (search "Bulk Student 007" on **Invoices**) |
 
 ## Commands
 

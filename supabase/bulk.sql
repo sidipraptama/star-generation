@@ -1,7 +1,8 @@
 -- Optional: a lot of synthetic data, to see the lists with search, filters and paging at scale.
 -- 120 students (they cannot log in), 60 classes, about 4,800 enrollments with an invoice each,
 -- 75 lessons, approved logbooks with earnings, and logbooks in every status.
--- Load it on top of the seed (and the demo history if you like): pnpm db:bulk
+-- Load it on top of the seed: pnpm db:bulk. Load the demo history first (pnpm db:demo) to also give
+-- Alya 25 old cancelled invoices, which are attached to her demo enrollment.
 \set ON_ERROR_STOP on
 
 -- A valid version 4 shaped uuid derived from a name, so that the same name always gives the same id.
