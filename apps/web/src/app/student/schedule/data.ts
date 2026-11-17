@@ -22,6 +22,8 @@ export type ClassCoverage = {
   uncovered: Upcoming[];
 };
 
+const MAX_FORECAST_LESSONS = 500;
+
 /** Hours cover upcoming lessons in order; students with no hours left cannot see upcoming ones at all. */
 export async function getCoverage(enrollments: OpenEnrollment[]): Promise<ClassCoverage[]> {
   if (enrollments.length === 0) return [];
@@ -37,7 +39,9 @@ export async function getCoverage(enrollments: OpenEnrollment[]): Promise<ClassC
       )
       .eq("status", "scheduled")
       .gt("end_at", new Date().toISOString())
-      .order("start_at"),
+      .order("start_at")
+      // A forecast never needs more than the next few hundred lessons.
+      .limit(MAX_FORECAST_LESSONS),
   );
 
   return enrollments.map((enrollment) => {

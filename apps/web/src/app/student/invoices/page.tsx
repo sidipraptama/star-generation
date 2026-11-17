@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Receipt } from "lucide-react";
+import { pickTab, StatusTabs, type StatusTab } from "@/components/admin/status-tabs";
+import { Pagination } from "@/components/list/pagination";
 import { Alert } from "@/components/ui/alert";
 import { ButtonLink } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -11,6 +13,8 @@ import { StatusBadge } from "@/components/ui/badge";
 import { ImagePreview } from "@/components/ui/image-preview";
 import { ProofUploadDialog } from "@/components/student/proof-upload-dialog";
 import { formatDateTime, formatRupiah } from "@/lib/format";
+import { listHref, pageBounds, parsePage } from "@/lib/list";
+import { stayInRange } from "@/lib/paging";
 import { proofUrl } from "@/lib/proof";
 import { createClient } from "@/lib/supabase/server";
 import { cancelInvoice } from "../actions";
@@ -18,21 +22,62 @@ import { getEnrollmentClassNames, must } from "../data";
 
 export const metadata: Metadata = { title: "Invoices" };
 
-export default async function StudentInvoicesPage() {
+const BASE_PATH = "/student/invoices";
+const INVOICES_PER_PAGE = 10;
+
+const tabs: StatusTab[] = [
+  { value: "all", label: "All" },
+  { value: "unpaid", label: "Waiting for payment" },
+  { value: "paid", label: "Paid" },
+  { value: "void", label: "Cancelled" },
+];
+
+type Props = { searchParams: Promise<{ status?: string; page?: string }> };
+
+export default async function StudentInvoicesPage({ searchParams }: Props) {
+  const raw = await searchParams;
+  const active = pickTab(tabs, raw.status, "all");
+  const tab = active === "all" ? undefined : active;
+  const page = parsePage(raw.page);
+  const params = { status: tab };
+
   const db = await createClient();
-  const [invoiceResult, classNames, approvalResult] = await Promise.all([
-    db
-      .from("invoices")
-      .select(
-        "id, enrollment_id, hours, student_rate, amount, status, issued_at, paid_at, payment_reference, void_reason, proof_uploaded_at",
-      )
-      .order("issued_at", { ascending: false }),
-    getEnrollmentClassNames(),
-    db.from("invoice_approvals").select("invoice_id, approved_by"),
+  const { from, to } = pageBounds(page, INVOICES_PER_PAGE);
+  let query = db
+    .from("invoices")
+    .select(
+      "id, enrollment_id, hours, student_rate, amount, status, issued_at, paid_at, payment_reference, void_reason, proof_uploaded_at",
+      { count: "exact" },
+    )
+    .order("issued_at", { ascending: false })
+    .order("id")
+    .range(from, to);
+  if (tab) query = query.eq("status", tab as "unpaid" | "paid" | "void");
+
+  const [invoiceResult, waiting] = await Promise.all([
+    query,
+    db.from("invoices").select("id", { count: "exact", head: true }).eq("status", "unpaid"),
   ]);
+  stayInRange(
+    page,
+    invoiceResult,
+    (target) => listHref(BASE_PATH, params, target),
+    INVOICES_PER_PAGE,
+  );
   const invoices = must(invoiceResult);
-  const approvedBy = new Map(must(approvalResult).map((row) => [row.invoice_id, row.approved_by]));
-  const hasUnpaid = invoices.some((invoice) => invoice.status === "unpaid");
+  const total = invoiceResult.count ?? 0;
+
+  const invoiceIds = invoices.map((invoice) => invoice.id);
+  const [classNames, approvalResult] = await Promise.all([
+    getEnrollmentClassNames([...new Set(invoices.map((invoice) => invoice.enrollment_id))]),
+    invoiceIds.length
+      ? db.from("invoice_approvals").select("invoice_id, approved_by").in("invoice_id", invoiceIds)
+      : { data: [] },
+  ]);
+  const approvedBy = new Map(
+    (approvalResult.data ?? []).map((row) => [row.invoice_id, row.approved_by]),
+  );
+  const hasUnpaid = (waiting.count ?? 0) > 0;
 
   return (
     <>
@@ -41,7 +86,7 @@ export default async function StudentInvoicesPage() {
         description="What you have bought and what is still waiting for payment."
       />
 
-      {invoices.length === 0 ? (
+      {total === 0 && !tab ? (
         <Card>
           <EmptyState
             icon={Receipt}
@@ -60,6 +105,18 @@ export default async function StudentInvoicesPage() {
                 automatically. You do not need to do anything else.
               </p>
             </Alert>
+          )}
+
+          <StatusTabs basePath={BASE_PATH} tabs={tabs} active={active} defaultValue="all" />
+
+          {invoices.length === 0 && (
+            <Card>
+              <EmptyState
+                icon={Receipt}
+                title="No invoices here"
+                description="Try another tab to see more invoices."
+              />
+            </Card>
           )}
 
           <ul className="space-y-3">
@@ -160,6 +217,15 @@ export default async function StudentInvoicesPage() {
               );
             })}
           </ul>
+
+          <Pagination
+            basePath={BASE_PATH}
+            params={params}
+            page={page}
+            total={total}
+            size={INVOICES_PER_PAGE}
+            noun={total === 1 ? "invoice" : "invoices"}
+          />
         </div>
       )}
     </>

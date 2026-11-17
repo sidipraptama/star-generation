@@ -1,4 +1,4 @@
-import { isPast, wibInstant, wibMonthOf } from "@/lib/time";
+import { isPast, wibInstant } from "@/lib/time";
 
 export type LessonRow = {
   id: string;
@@ -9,14 +9,6 @@ export type LessonRow = {
 };
 
 export type LogbookStatus = "draft" | "changes_requested" | "submitted" | "approved";
-
-export type LogbookRow = {
-  id: string;
-  class_id: string;
-  month: string;
-  status: LogbookStatus;
-  review_note: string | null;
-};
 
 export function isEditable(status: LogbookStatus | undefined) {
   return status === undefined || status === "draft" || status === "changes_requested";
@@ -54,40 +46,4 @@ export function logbookProgress(lessons: LessonRow[], loggedLessonIds: ReadonlyS
     missing,
     ready: active.length > 0 && unfinished === 0 && missing === 0,
   };
-}
-
-export type MonthSummary = {
-  classId: string;
-  month: string;
-  lessons: LessonRow[];
-  progress: ReturnType<typeof logbookProgress>;
-  logbook: LogbookRow | null;
-};
-
-/** One summary per class and WIB month that has lessons, newest month first. */
-export function summarizeMonths(
-  lessons: LessonRow[],
-  entries: { lesson_id: string }[],
-  logbooks: LogbookRow[],
-): MonthSummary[] {
-  const loggedIds = new Set(entries.map((entry) => entry.lesson_id));
-  const groups = new Map<string, LessonRow[]>();
-
-  for (const lesson of lessons) {
-    const key = `${lesson.class_id}|${wibMonthOf(lesson.start_at)}`;
-    groups.set(key, [...(groups.get(key) ?? []), lesson]);
-  }
-
-  return [...groups.entries()]
-    .map(([key, group]) => {
-      const [classId, month] = key.split("|");
-      return {
-        classId,
-        month,
-        lessons: group,
-        progress: logbookProgress(group, loggedIds),
-        logbook: logbooks.find((l) => l.class_id === classId && l.month === month) ?? null,
-      };
-    })
-    .sort((a, b) => b.month.localeCompare(a.month));
 }

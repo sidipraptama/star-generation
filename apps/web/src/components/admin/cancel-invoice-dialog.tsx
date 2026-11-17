@@ -1,5 +1,6 @@
 import { Ban } from "lucide-react";
 import { voidInvoice } from "@/app/admin/actions";
+import { Button } from "@/components/ui/button";
 import { DialogForm } from "@/components/ui/dialog-form";
 import { Field, Textarea } from "@/components/ui/field";
 import { formatRupiah } from "@/lib/format";
@@ -9,6 +10,8 @@ type CancelInvoiceDialogProps = {
   studentName: string;
   amount: number;
   paid: boolean;
+  /** Set when the invoice can no longer be cancelled: the button is disabled and says why. */
+  blockedReason?: string;
 };
 
 export function CancelInvoiceDialog({
@@ -16,8 +19,24 @@ export function CancelInvoiceDialog({
   studentName,
   amount,
   paid,
+  blockedReason,
 }: CancelInvoiceDialogProps) {
   const reasonId = `void-reason-${invoiceId}`;
+
+  if (blockedReason) {
+    const noteId = `cancel-blocked-${invoiceId}`;
+    return (
+      <div className="flex flex-col items-end gap-1">
+        <Button variant="ghost" size="sm" disabled title={blockedReason} aria-describedby={noteId}>
+          <Ban className="size-4" aria-hidden />
+          Cancel invoice
+        </Button>
+        <p id={noteId} className="text-muted max-w-52 text-right text-xs whitespace-normal">
+          {blockedReason}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <DialogForm

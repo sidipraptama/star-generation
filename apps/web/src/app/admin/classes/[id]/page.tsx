@@ -14,21 +14,42 @@ import { Alert } from "@/components/ui/alert";
 import { ButtonLink } from "@/components/ui/button";
 import { DialogForm } from "@/components/ui/dialog-form";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Pagination } from "@/components/list/pagination";
 import { PageHeader } from "@/components/ui/page-header";
 import { Table, Td, Th } from "@/components/ui/table";
 import { formatLessonWhen, formatMonth, formatRupiah } from "@/lib/format";
+import { listHref, otherPages, pageBounds, parsePage } from "@/lib/list";
+import { stayInRange } from "@/lib/paging";
 import { createClient } from "@/lib/supabase/server";
-import { isPast } from "@/lib/time";
+
+const SECTION_ROWS = 10;
 
 export const metadata: Metadata = { title: "Class details" };
 
-export default async function ClassDetailPage({ params }: { params: Promise<{ id: string }> }) {
+type Props = {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ upcoming?: string; past?: string; logbooks?: string }>;
+};
+
+export default async function ClassDetailPage({ params, searchParams }: Props) {
   const { id } = await params;
   if (!z.uuid().safeParse(id).success) notFound();
 
+  const raw = await searchParams;
+  const pages = {
+    upcoming: parsePage(raw.upcoming),
+    past: parsePage(raw.past),
+    logbooks: parsePage(raw.logbooks),
+  };
+  const basePath = `/admin/classes/${id}`;
+  const pageParams = (without: keyof typeof pages) => otherPages(pages, without);
+  const bounds = (page: number) => pageBounds(page, SECTION_ROWS);
+  const now = new Date().toISOString();
+  const lessonSelect = "id, start_at, end_at, status, profiles!lessons_tutor_id_fkey(full_name)";
+
   const db = await createClient();
 
-  const [classResult, enrollments, lessons, logbooks] = await Promise.all([
+  const [classResult, enrollments, upcomingResult, pastResult, logbooks] = await Promise.all([
     db
       .from("classes")
       .select(
@@ -44,14 +65,25 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ id
       .order("created_at"),
     db
       .from("lessons")
-      .select("id, start_at, end_at, status, profiles!lessons_tutor_id_fkey(full_name)")
+      .select(lessonSelect, { count: "exact" })
       .eq("class_id", id)
-      .order("start_at"),
+      .eq("status", "scheduled")
+      .gt("end_at", now)
+      .order("start_at")
+      .range(bounds(pages.upcoming).from, bounds(pages.upcoming).to),
+    db
+      .from("lessons")
+      .select(lessonSelect, { count: "exact" })
+      .eq("class_id", id)
+      .or(`status.eq.cancelled,end_at.lte.${now}`)
+      .order("start_at", { ascending: false })
+      .range(bounds(pages.past).from, bounds(pages.past).to),
     db
       .from("logbooks")
-      .select("id, month, status, logbook_entries(count)")
+      .select("id, month, status, logbook_entries(count)", { count: "exact" })
       .eq("class_id", id)
-      .order("month", { ascending: false }),
+      .order("month", { ascending: false })
+      .range(bounds(pages.logbooks).from, bounds(pages.logbooks).to),
   ]);
 
   const item = classResult.data;
@@ -71,11 +103,23 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ id
     balances.data?.map((row) => [row.enrollment_id, row.balance_minutes ?? 0]),
   );
 
-  const allLessons = lessons.data ?? [];
-  const upcoming = allLessons.filter(
-    (lesson) => lesson.status === "scheduled" && !isPast(lesson.end_at),
-  );
-  const past = allLessons.filter((lesson) => !upcoming.includes(lesson)).reverse();
+  const upcoming = upcomingResult.data ?? [];
+  const past = pastResult.data ?? [];
+  const totals = {
+    upcoming: upcomingResult.count ?? 0,
+    past: pastResult.count ?? 0,
+    logbooks: logbooks.count ?? 0,
+  };
+  const results = { upcoming: upcomingResult, past: pastResult, logbooks };
+  for (const key of ["upcoming", "past", "logbooks"] as const) {
+    stayInRange(
+      pages[key],
+      results[key],
+      (target) =>
+        listHref(basePath, { ...pageParams(key), [key]: target > 1 ? String(target) : undefined }),
+      SECTION_ROWS,
+    );
+  }
 
   const studentRate = item.class_student_rates?.student_rate ?? 0;
   const tutorRate = item.class_tutor_rates?.tutor_rate ?? 0;
@@ -183,8 +227,34 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ id
             title="Upcoming"
             lessons={upcoming}
             empty="No upcoming lessons are scheduled."
+            pagination={
+              <Pagination
+                basePath={basePath}
+                params={pageParams("upcoming")}
+                page={pages.upcoming}
+                total={totals.upcoming}
+                size={SECTION_ROWS}
+                pageParam="upcoming"
+                noun={totals.upcoming === 1 ? "lesson" : "lessons"}
+              />
+            }
           />
-          <LessonTable title="Past and cancelled" lessons={past} empty="No past lessons yet." />
+          <LessonTable
+            title="Past and cancelled"
+            lessons={past}
+            empty="No past lessons yet."
+            pagination={
+              <Pagination
+                basePath={basePath}
+                params={pageParams("past")}
+                page={pages.past}
+                total={totals.past}
+                size={SECTION_ROWS}
+                pageParam="past"
+                noun={totals.past === 1 ? "lesson" : "lessons"}
+              />
+            }
+          />
         </div>
       </Section>
 
@@ -232,6 +302,15 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ id
             </tbody>
           </Table>
         )}
+        <Pagination
+          basePath={basePath}
+          params={pageParams("logbooks")}
+          page={pages.logbooks}
+          total={totals.logbooks}
+          size={SECTION_ROWS}
+          pageParam="logbooks"
+          noun={totals.logbooks === 1 ? "logbook" : "logbooks"}
+        />
       </Section>
 
       <p className="mt-8 text-sm">
@@ -255,10 +334,12 @@ function LessonTable({
   title,
   lessons,
   empty,
+  pagination,
 }: {
   title: string;
   lessons: LessonRow[];
   empty: string;
+  pagination: React.ReactNode;
 }) {
   return (
     <div>
@@ -298,6 +379,7 @@ function LessonTable({
           </tbody>
         </Table>
       )}
+      {pagination}
     </div>
   );
 }

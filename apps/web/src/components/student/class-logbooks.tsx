@@ -10,7 +10,13 @@ export type ApprovedLogbook = {
   entries: LogbookEntryView[];
 };
 
-export function ClassLogbooks({ logbooks }: { logbooks: ApprovedLogbook[] }) {
+export function ClassLogbooks({
+  logbooks,
+  pagination,
+}: {
+  logbooks: ApprovedLogbook[];
+  pagination?: React.ReactNode;
+}) {
   return (
     <Card
       title="Progress notes"
@@ -49,6 +55,7 @@ export function ClassLogbooks({ logbooks }: { logbooks: ApprovedLogbook[] }) {
           ))}
         </div>
       )}
+      {pagination}
     </Card>
   );
 }

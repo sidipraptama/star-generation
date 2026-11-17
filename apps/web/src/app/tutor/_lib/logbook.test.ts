@@ -1,12 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  isEditable,
-  logbookProgress,
-  monthFromSlug,
-  monthRange,
-  summarizeMonths,
-  type LessonRow,
-} from "./logbook";
+import { isEditable, logbookProgress, monthFromSlug, monthRange, type LessonRow } from "./logbook";
 
 const past = (id: string, status: LessonRow["status"] = "scheduled"): LessonRow => ({
   id,
@@ -53,20 +46,6 @@ describe("logbookProgress", () => {
   it("ignores cancelled lessons", () => {
     const result = logbookProgress([past("a"), past("b", "cancelled")], new Set(["a"]));
     expect(result).toMatchObject({ total: 1, ready: true });
-  });
-});
-
-describe("summarizeMonths", () => {
-  it("groups lessons by class and WIB month with the matching logbook", () => {
-    const logbook = {
-      id: "lb",
-      class_id: "class-1",
-      month: "2020-03-01",
-      status: "draft" as const,
-      review_note: null,
-    };
-    const [summary] = summarizeMonths([past("a")], [{ lesson_id: "a" }], [logbook]);
-    expect(summary).toMatchObject({ month: "2020-03-01", logbook, progress: { ready: true } });
   });
 });
 

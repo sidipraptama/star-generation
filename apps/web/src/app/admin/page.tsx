@@ -21,19 +21,8 @@ export default async function AdminOverviewPage() {
   const today = todayInWib();
   const thisWeek = weekStart(today);
 
-  const [
-    unpaidCount,
-    reviewCount,
-    activeEnrollments,
-    classCount,
-    unpaidInvoices,
-    logbooks,
-    weekChips,
-  ] = await Promise.all([
-    db.from("invoices").select("id", { count: "exact", head: true }).eq("status", "unpaid"),
-    db.from("logbooks").select("id", { count: "exact", head: true }).eq("status", "submitted"),
-    db.from("enrollments").select("student_id").eq("status", "active"),
-    db.from("classes").select("id", { count: "exact", head: true }),
+  const [stats, unpaidInvoices, logbooks, weekChips] = await Promise.all([
+    db.from("admin_stats").select("*").single(),
     db
       .from("invoices")
       .select("id, hours, student_rate, issued_at, enrollments(profiles(full_name), classes(name))")
@@ -51,7 +40,6 @@ export default async function AdminOverviewPage() {
     getLessonChips(thisWeek, addDays(thisWeek, 7)),
   ]);
 
-  const activeStudents = new Set(activeEnrollments.data?.map((row) => row.student_id)).size;
   const invoices = unpaidInvoices.data ?? [];
   const waitingLogbooks = logbooks.data ?? [];
 
@@ -60,14 +48,18 @@ export default async function AdminOverviewPage() {
       <PageHeader title="Overview" description="What is happening across your classes today." />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <Stat icon={Receipt} label="Invoices waiting for payment" value={unpaidCount.count ?? 0} />
+        <Stat
+          icon={Receipt}
+          label="Invoices waiting for payment"
+          value={stats.data?.unpaid_invoices ?? 0}
+        />
         <Stat
           icon={NotebookPen}
           label="Logbooks waiting for review"
-          value={reviewCount.count ?? 0}
+          value={stats.data?.logbooks_to_review ?? 0}
         />
-        <Stat icon={Users} label="Active students" value={activeStudents} />
-        <Stat icon={BookOpen} label="Classes" value={classCount.count ?? 0} />
+        <Stat icon={Users} label="Active students" value={stats.data?.active_students ?? 0} />
+        <Stat icon={BookOpen} label="Classes" value={stats.data?.classes ?? 0} />
       </div>
 
       <h2 className="mt-10 mb-4 text-lg font-semibold">Needs your attention</h2>

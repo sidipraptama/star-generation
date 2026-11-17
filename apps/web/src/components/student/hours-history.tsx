@@ -12,7 +12,13 @@ export type LedgerLine = {
   occurredAt: string;
 };
 
-export function HoursHistory({ lines }: { lines: LedgerLine[] }) {
+export function HoursHistory({
+  lines,
+  pagination,
+}: {
+  lines: LedgerLine[];
+  pagination?: React.ReactNode;
+}) {
   return (
     <Card
       title="Hours history"
@@ -61,6 +67,7 @@ export function HoursHistory({ lines }: { lines: LedgerLine[] }) {
           </tbody>
         </Table>
       )}
+      {pagination}
     </Card>
   );
 }

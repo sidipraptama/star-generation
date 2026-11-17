@@ -53,13 +53,25 @@ function LessonGroup({ title, lessons }: { title: string; lessons: ScheduleLesso
   );
 }
 
-export function ClassSchedule({ lessons }: { lessons: ScheduleLesson[] }) {
-  const upcoming = lessons.filter((lesson) => !isPast(lesson.end_at));
-  const past = lessons.filter((lesson) => isPast(lesson.end_at)).reverse();
+type ClassScheduleProps = {
+  upcoming: ScheduleLesson[];
+  past: ScheduleLesson[];
+  /** True when the class has no lessons at all, as opposed to an empty page. */
+  isEmpty: boolean;
+  upcomingPagination: React.ReactNode;
+  pastPagination: React.ReactNode;
+};
 
+export function ClassSchedule({
+  upcoming,
+  past,
+  isEmpty,
+  upcomingPagination,
+  pastPagination,
+}: ClassScheduleProps) {
   return (
     <Card title="Schedule" description="All times are in WIB (Jakarta time).">
-      {lessons.length === 0 ? (
+      {isEmpty ? (
         <EmptyState
           icon={CalendarDays}
           title="No lessons yet"
@@ -68,7 +80,9 @@ export function ClassSchedule({ lessons }: { lessons: ScheduleLesson[] }) {
       ) : (
         <div className="space-y-5">
           <LessonGroup title="Coming up" lessons={upcoming} />
+          {upcomingPagination}
           <LessonGroup title="Past lessons" lessons={past} />
+          {pastPagination}
         </div>
       )}
     </Card>

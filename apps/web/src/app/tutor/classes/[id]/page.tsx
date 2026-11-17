@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CalendarDays, Users, Wallet } from "lucide-react";
+import { Pagination } from "@/components/list/pagination";
 import { AddLessonDialog, CancelLessonDialog } from "@/components/tutor/lesson-dialogs";
 import { BackLink } from "@/components/tutor/back-link";
 import { Badge, StatusBadge } from "@/components/ui/badge";
@@ -19,58 +20,111 @@ import {
   formatTimeRange,
   lessonMinutes,
 } from "@/lib/format";
-import { isPast, wibMonthOf } from "@/lib/time";
+import { listHref, otherPages, pageBounds, parsePage } from "@/lib/list";
+import { stayInRange } from "@/lib/paging";
+import { wibMonthOf } from "@/lib/time";
 import { createClient } from "@/lib/supabase/server";
 import { isUuid, plural, row, rows } from "../../_lib/data";
-import { monthSlug, summarizeMonths } from "../../_lib/logbook";
+import { monthSlug } from "../../_lib/logbook";
+
+const SECTION_ROWS = 10;
+const LOGBOOK_MONTHS = 6;
 
 export const metadata: Metadata = { title: "Class" };
 
-type Props = { params: Promise<{ id: string }> };
+type Props = {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ upcoming?: string; past?: string; months?: string }>;
+};
 
-export default async function TutorClassPage({ params }: Props) {
+export default async function TutorClassPage({ params, searchParams }: Props) {
   const { id } = await params;
   if (!isUuid(id)) notFound();
 
+  const raw = await searchParams;
+  const pages = {
+    upcoming: parsePage(raw.upcoming),
+    past: parsePage(raw.past),
+    months: parsePage(raw.months),
+  };
+  const sizes = { upcoming: SECTION_ROWS, past: SECTION_ROWS, months: LOGBOOK_MONTHS };
+  const basePath = `/tutor/classes/${id}`;
+  const rangeOf = (key: keyof typeof pages) => pageBounds(pages[key], sizes[key]);
+  const now = new Date().toISOString();
+  const lessonColumns = "id, class_id, start_at, end_at, status, cancel_reason";
+
   const db = await createClient();
-  const [classRes, rateRes, enrollmentsRes, lessonsRes, logbooksRes] = await Promise.all([
+  const [classRes, rateRes, enrollmentsRes, upcomingRes, pastRes, monthsRes] = await Promise.all([
     db.from("classes").select("id, name, description, capacity").eq("id", id).maybeSingle(),
     db.from("class_tutor_rates").select("tutor_rate").eq("class_id", id).maybeSingle(),
     db.from("enrollments").select("id, profiles(full_name)").eq("class_id", id),
     db
       .from("lessons")
-      .select("id, class_id, start_at, end_at, status, cancel_reason")
+      .select(lessonColumns, { count: "exact" })
       .eq("class_id", id)
-      .order("start_at"),
-    db.from("logbooks").select("id, class_id, month, status, review_note").eq("class_id", id),
+      .eq("status", "scheduled")
+      .gt("end_at", now)
+      .order("start_at")
+      .range(rangeOf("upcoming").from, rangeOf("upcoming").to),
+    db
+      .from("lessons")
+      .select(lessonColumns, { count: "exact" })
+      .eq("class_id", id)
+      .or(`status.eq.cancelled,end_at.lte.${now}`)
+      .order("start_at", { ascending: false })
+      .range(rangeOf("past").from, rangeOf("past").to),
+    db
+      .from("logbook_progress")
+      .select("*", { count: "exact" })
+      .eq("class_id", id)
+      .or("lessons_total.gt.0,logbook_id.not.is.null")
+      .order("month", { ascending: false })
+      .range(rangeOf("months").from, rangeOf("months").to),
   ]);
 
   const cls = row(classRes);
   if (!cls) notFound();
 
+  const totals = {
+    upcoming: upcomingRes.count ?? 0,
+    past: pastRes.count ?? 0,
+    months: monthsRes.count ?? 0,
+  };
+  const results = { upcoming: upcomingRes, past: pastRes, months: monthsRes };
+  for (const key of Object.keys(pages) as (keyof typeof pages)[]) {
+    stayInRange(
+      pages[key],
+      results[key],
+      (target) =>
+        listHref(basePath, {
+          ...otherPages(pages, key),
+          [key]: target > 1 ? String(target) : undefined,
+        }),
+      sizes[key],
+    );
+  }
   const rate = row(rateRes)?.tutor_rate;
   const students = rows(enrollmentsRes);
-  const lessons = rows(lessonsRes);
-  const logbooks = rows(logbooksRes);
-  const entries =
-    logbooks.length > 0
-      ? rows(
-          await db
-            .from("logbook_entries")
-            .select("lesson_id")
-            .in(
-              "logbook_id",
-              logbooks.map((l) => l.id),
-            ),
-        )
-      : [];
-
-  const loggedIds = new Set(entries.map((e) => e.lesson_id));
-  const upcoming = lessons.filter((l) => l.status === "scheduled" && !isPast(l.end_at));
-  const past = lessons.filter((l) => !upcoming.includes(l)).reverse();
-  const months = summarizeMonths(lessons, entries, logbooks).filter(
-    (m) => m.progress.total > 0 || m.logbook,
+  const upcoming = rows(upcomingRes);
+  const past = rows(pastRes);
+  const months = rows(monthsRes);
+  const pagination = (key: keyof typeof pages, nouns: [string, string]) => (
+    <Pagination
+      basePath={basePath}
+      params={otherPages(pages, key)}
+      page={pages[key]}
+      total={totals[key]}
+      size={sizes[key]}
+      pageParam={key}
+      noun={nouns[totals[key] === 1 ? 0 : 1]}
+    />
   );
+
+  const pastIds = past.map((lesson) => lesson.id);
+  const entries = pastIds.length
+    ? rows(await db.from("logbook_entries").select("lesson_id").in("lesson_id", pastIds))
+    : [];
+  const loggedIds = new Set(entries.map((e) => e.lesson_id));
 
   return (
     <>
@@ -158,6 +212,7 @@ export default async function TutorClassPage({ params }: Props) {
               description="Use the Add lesson button to schedule the next one."
             />
           )}
+          {pagination("upcoming", ["lesson", "lessons"])}
         </Card>
 
         <Card title="Logbooks" description="One logbook per month, with an entry for every lesson.">
@@ -169,19 +224,19 @@ export default async function TutorClassPage({ params }: Props) {
                   className="flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
                 >
                   <div>
-                    <p className="font-semibold">{formatMonth(m.month)}</p>
+                    <p className="font-semibold">{m.month && formatMonth(m.month)}</p>
                     <p className="text-muted text-sm">
-                      {m.progress.logged} of {plural(m.progress.total, "lesson")} logged
+                      {m.entries_written ?? 0} of {plural(m.lessons_total ?? 0, "lesson")} logged
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
-                    {m.logbook ? (
-                      <StatusBadge kind="logbook" status={m.logbook.status} />
+                    {m.logbook_status ? (
+                      <StatusBadge kind="logbook" status={m.logbook_status} />
                     ) : (
                       <Badge>Not started</Badge>
                     )}
                     <ButtonLink
-                      href={`/tutor/classes/${cls.id}/logbook/${monthSlug(m.month)}`}
+                      href={`/tutor/classes/${cls.id}/logbook/${monthSlug(m.month ?? "")}`}
                       variant="secondary"
                       size="sm"
                     >
@@ -198,6 +253,7 @@ export default async function TutorClassPage({ params }: Props) {
               description="Add a lesson first. After it ends, you can write its logbook entry."
             />
           )}
+          {pagination("months", ["month", "months"])}
         </Card>
 
         {past.length > 0 && (
@@ -243,6 +299,7 @@ export default async function TutorClassPage({ params }: Props) {
                 ))}
               </tbody>
             </Table>
+            {pagination("past", ["lesson", "lessons"])}
           </Card>
         )}
       </div>

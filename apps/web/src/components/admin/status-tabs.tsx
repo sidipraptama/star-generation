@@ -1,5 +1,6 @@
 import Link from "next/link";
 import clsx from "clsx";
+import { listHref } from "@/lib/list";
 
 export type StatusTab = { value: string; label: string };
 
@@ -8,14 +9,19 @@ type StatusTabsProps = {
   tabs: StatusTab[];
   active: string;
   defaultValue: string;
+  /** Other parameters to keep when switching tabs, such as the search text. */
+  keep?: Record<string, string | undefined>;
 };
 
-export function StatusTabs({ basePath, tabs, active, defaultValue }: StatusTabsProps) {
+export function StatusTabs({ basePath, tabs, active, defaultValue, keep }: StatusTabsProps) {
   return (
     <nav aria-label="Filter by status" className="mb-4 flex flex-wrap gap-2">
       {tabs.map((tab) => {
         const isActive = tab.value === active;
-        const href = tab.value === defaultValue ? basePath : `${basePath}?status=${tab.value}`;
+        const href = listHref(basePath, {
+          ...keep,
+          status: tab.value === defaultValue ? undefined : tab.value,
+        });
         return (
           <Link
             key={tab.value}
