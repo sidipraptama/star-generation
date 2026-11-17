@@ -42,7 +42,9 @@ Each open decision from the brief: what I chose, how the system enforces it, and
 
 **Choice.** Payment is simulated, mirroring how admins confirm bank transfers today. Only an admin can mark an invoice as paid, optionally with a payment reference; the system records who and when. The first payment activates the enrollment and opens the class. Students can cancel their own unpaid invoice. Undoing a payment is an admin-only "cancel" with a mandatory reason, and it is refused once any of the invoice's hours have been used. Cancelling the only paid invoice also cancels the enrollment and frees the seat.
 
-**Enforced by.** `mark_invoice_paid()` and `void_invoice()`, which check the role, lock the invoice and reuse the ledger to test "hours already used".
+**Proof of payment (optional).** A student can attach a photo or screenshot of the transfer to an invoice that is still waiting for payment, and replace it until it is paid. It is never required: an admin can approve an invoice with or without one, and the class opens either way. The admin sees the proof in the invoice table and in the Mark as paid dialog, and every paid invoice shows **Approved by** the admin's name to both the admin and the student. After payment the proof is kept and can no longer be changed ([ADR 0010](adr/0010-payment-proofs-in-private-storage.md)).
+
+**Enforced by.** `mark_invoice_paid()` and `void_invoice()`, which check the role, lock the invoice and reuse the ledger to test "hours already used". `attach_payment_proof()` and the storage policies decide who can add and read a proof.
 
 ## Improvements
 

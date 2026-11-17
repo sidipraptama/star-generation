@@ -13,7 +13,7 @@ The only requirement is [Docker](https://www.docker.com/products/docker-desktop)
 docker compose up --build
 ```
 
-Open http://localhost:3000. The first run downloads the images and builds the app, which takes a few minutes. Compose starts everything in the right order: Postgres, Supabase Auth (GoTrue), the migrations and seed, the REST API (PostgREST), an nginx gateway and the Next.js app.
+Open http://localhost:3000. The first run downloads the images and builds the app, which takes a few minutes. Compose starts everything in the right order: Postgres, Supabase Auth (GoTrue), Supabase Storage, the migrations and seed, the REST API (PostgREST), an nginx gateway and the Next.js app.
 
 ```bash
 docker compose down        # stop, keeping the data
@@ -23,10 +23,12 @@ docker compose down -v     # stop and wipe the data (the seed is loaded again on
 | Service | Address |
 | --- | --- |
 | Web app | http://localhost:3000 |
-| API gateway (`/auth/v1`, `/rest/v1`) | http://localhost:54321 |
+| API gateway (`/auth/v1`, `/rest/v1`, `/storage/v1`) | http://localhost:54321 |
 | Postgres | `localhost:54322`, user `postgres`, password `postgres` |
 
-The compose file ships with public demo values for the database password, JWT secret and anon key so it works out of the box on your own machine. Set `POSTGRES_PASSWORD`, `JWT_SECRET` and `ANON_KEY` in the environment to change them (the anon key must be a JWT signed with the secret).
+The compose file ships with public demo values for the database password, JWT secret and the anon and service keys so it works out of the box on your own machine. Set `POSTGRES_PASSWORD`, `JWT_SECRET`, `ANON_KEY` and `SERVICE_ROLE_KEY` in the environment to change them (both keys must be JWTs signed with the secret).
+
+Updating from an older checkout: run `docker compose down -v` once, because the storage service needs its database role set up when the database is first created.
 
 ### Developing the app
 
@@ -34,7 +36,7 @@ Run only the backend in Docker and the app on your machine (hot reload). Needs N
 
 ```bash
 pnpm install
-pnpm db:start   # db, auth, migrations, API and gateway in the background
+pnpm db:start   # db, auth, storage, migrations, API and gateway in the background
 pnpm dev        # http://localhost:3000
 ```
 
@@ -66,6 +68,8 @@ pnpm db:demo
 Adds Alya and Dimas as paying students, last month's approved logbook (with tutor earnings), two recent lessons that still need logbook entries, and two lessons next month. Dates are relative to today, so it works on any day. Run `docker compose down -v` and start again to go back to the plain seed.
 
 Open **Schedule** in any role for the week and month calendar. As Budi, click an empty slot to add a lesson or use **Repeat weekly** to create a whole series; as Alya, upcoming lessons that her remaining hours no longer cover are flagged.
+
+Invoices can carry an optional proof of payment: as Alya, open **Invoices** and use **Add proof of payment** on an unpaid invoice (JPG, PNG or WebP, up to 5 MB); as Rina, the proof shows in the invoices table and in **Mark as paid**, and a paid invoice shows who approved it.
 
 A good walkthrough: sign in as Budi, write entries for the two recent lessons, submit the logbook (all lessons of the month must have ended and have an entry), then sign in as Rina to preview the earnings and approve it, and finally as Alya to read it.
 

@@ -44,6 +44,8 @@ Derived, not stored: `hour_ledger` and `enrollment_balances` (purchases minus de
 | Only admins approve; approving twice adds nothing | role check and `for update` status guard in `approve_logbook()`, `unique (lesson_id)` on `earnings` |
 | Students only see paid classes; logbooks hidden until approved | RLS policies using `private` helper functions |
 | Tutors never see student rates; only admin and the tutor see earnings | rates and earnings in separate tables with their own policies, [ADR 0002](docs/adr/0002-visibility-with-rls.md) |
+| A payment proof is optional; only the owner adds one to an unpaid invoice; only the owner and admins read it | private bucket with storage policies, `attach_payment_proof()`, [ADR 0010](docs/adr/0010-payment-proofs-in-private-storage.md) |
+| Who approved a payment | `invoices.paid_by`, shown through the `invoice_approvals` view that exposes only the name |
 | Only the write paths above exist | `insert/update/delete` revoked from `anon` and `authenticated` |
 
 pgTAP tests in `supabase/tests/database` impersonate each seeded user to prove these rules.
@@ -52,6 +54,7 @@ pgTAP tests in `supabase/tests/database` impersonate each seeded user to prove t
 
 - `app/admin`, `app/tutor`, `app/student`: one route group per role. Each layout calls `requireRole()`; pages read data with the user's session.
 - Server Actions are one-liners over `rpcAction()` (`lib/action.ts`): validate with zod, call one database function, translate database errors into plain messages.
+- Payment proofs are uploaded by a Server Action with the student's own session and shown through the route handler `app/proofs/[invoiceId]/route.ts`, which reads under row level security. The browser never calls storage.
 - `proxy.ts` only refreshes the session cookie and redirects visitors who are not signed in.
 - The calendar (`components/calendar`) is server-rendered and its state lives in the URL (`view`, `date`, filters, and `lesson`, `add` or `repeat` for the dialog that is open), see [ADR 0007](docs/adr/0007-calendar-state-in-the-url.md).
 
