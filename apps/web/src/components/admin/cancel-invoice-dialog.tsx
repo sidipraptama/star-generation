@@ -31,7 +31,7 @@ export function CancelInvoiceDialog({
           <Ban className="size-4" aria-hidden />
           Cancel invoice
         </Button>
-        <p id={noteId} className="text-muted max-w-52 text-right text-xs whitespace-normal">
+        <p id={noteId} className="text-muted max-w-44 text-right text-xs whitespace-normal">
           {blockedReason}
         </p>
       </div>

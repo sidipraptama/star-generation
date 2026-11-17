@@ -148,12 +148,9 @@ export default async function InvoicesPage({ searchParams }: Props) {
             <tr>
               <Th>Student</Th>
               <Th>Class</Th>
-              <Th>Hours</Th>
-              <Th>Rate</Th>
               <Th>Amount</Th>
               <Th>Status</Th>
               <Th>Proof</Th>
-              <Th>Dates</Th>
               <Th sticky />
             </tr>
           </thead>
@@ -171,14 +168,23 @@ export default async function InvoicesPage({ searchParams }: Props) {
                     <p className="font-semibold">{studentName}</p>
                     <p className="text-muted text-xs">{invoice.student_email}</p>
                   </Td>
-                  <Td className="min-w-44">{invoice.class_name}</Td>
-                  <Td>{invoice.hours}h</Td>
+                  <Td className="min-w-36">{invoice.class_name}</Td>
                   <Td className="whitespace-nowrap">
-                    {formatRupiah(invoice.student_rate ?? 0)} / hour
+                    <p className="font-semibold">{formatRupiah(amount)}</p>
+                    <p className="text-muted text-xs">
+                      {invoice.hours}h × {formatRupiah(invoice.student_rate ?? 0)}
+                    </p>
                   </Td>
-                  <Td className="font-semibold whitespace-nowrap">{formatRupiah(amount)}</Td>
-                  <Td>
+                  <Td className="min-w-44">
                     {invoice.status && <StatusBadge kind="invoice" status={invoice.status} />}
+                    <div className="text-muted mt-1.5 space-y-0.5 text-xs">
+                      {invoice.issued_at && <p>Issued {formatDate(invoice.issued_at)}</p>}
+                      {invoice.paid_at && <p>Paid {formatDate(invoice.paid_at)}</p>}
+                      {invoice.approved_by && <p>Approved by {invoice.approved_by}</p>}
+                      {invoice.payment_reference && <p>Ref: {invoice.payment_reference}</p>}
+                      {invoice.voided_at && <p>Cancelled {formatDate(invoice.voided_at)}</p>}
+                      {invoice.void_reason && <p>{invoice.void_reason}</p>}
+                    </div>
                   </Td>
                   <Td>
                     {proofSrc ? (
@@ -189,16 +195,6 @@ export default async function InvoicesPage({ searchParams }: Props) {
                       />
                     ) : (
                       <span className="text-muted text-xs">None</span>
-                    )}
-                  </Td>
-                  <Td className="text-muted text-xs whitespace-nowrap">
-                    {invoice.issued_at && <p>Issued {formatDate(invoice.issued_at)}</p>}
-                    {invoice.paid_at && <p>Paid {formatDate(invoice.paid_at)}</p>}
-                    {invoice.approved_by && <p>Approved by {invoice.approved_by}</p>}
-                    {invoice.payment_reference && <p>Ref: {invoice.payment_reference}</p>}
-                    {invoice.voided_at && <p>Cancelled {formatDate(invoice.voided_at)}</p>}
-                    {invoice.void_reason && (
-                      <p className="max-w-48 whitespace-normal">{invoice.void_reason}</p>
                     )}
                   </Td>
                   <Td sticky>

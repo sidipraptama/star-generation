@@ -5,16 +5,16 @@ describe("cancelBlockedReason", () => {
   it("explains a paid invoice whose hours were partly used", () => {
     expect(
       cancelBlockedReason({ status: "paid", canCancel: false, balanceMinutes: 540, hours: 12 }),
-    ).toBe("Cannot cancel: the student has already used some of these hours (9h left of 12h).");
+    ).toBe("Cannot cancel: hours are already used (9h left of 12h).");
   });
 
   it("explains a paid invoice whose hours are all used", () => {
     expect(
       cancelBlockedReason({ status: "paid", canCancel: false, balanceMinutes: 0, hours: 6 }),
-    ).toBe("Cannot cancel: the student has already used all 6h from this payment.");
+    ).toBe("Cannot cancel: all 6h are already used.");
     expect(
       cancelBlockedReason({ status: "paid", canCancel: false, balanceMinutes: -30, hours: 6 }),
-    ).toBe("Cannot cancel: the student has already used all 6h from this payment.");
+    ).toBe("Cannot cancel: all 6h are already used.");
   });
 
   it("never shows more hours left than the invoice has", () => {

@@ -13,6 +13,6 @@ export function cancelBlockedReason({ status, canCancel, balanceMinutes, hours }
 
   const left = Math.min(Math.max(0, balanceMinutes ?? 0), hours * 60);
   return left === 0
-    ? `Cannot cancel: the student has already used all ${hours}h from this payment.`
-    : `Cannot cancel: the student has already used some of these hours (${formatDuration(left)} left of ${hours}h).`;
+    ? `Cannot cancel: all ${hours}h are already used.`
+    : `Cannot cancel: hours are already used (${formatDuration(left)} left of ${hours}h).`;
 }
