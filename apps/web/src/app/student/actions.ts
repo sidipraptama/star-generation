@@ -1,7 +1,11 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { rpcAction, type ActionState } from "@/lib/action";
+import { friendlyError, rpcAction, type ActionState } from "@/lib/action";
+import { requireRole } from "@/lib/auth";
+import { checkProofFile, PROOF_BUCKET, proofPath } from "@/lib/proof";
+import { createClient } from "@/lib/supabase/server";
 
 const hours = z.coerce
   .number({ error: "Enter the number of hours." })
@@ -27,4 +31,44 @@ export async function cancelInvoice(_: ActionState, formData: FormData) {
     z.object({ invoiceId: z.uuid(), reason: z.string().optional() }),
     (db, v) => db.rpc("void_invoice", { p_invoice_id: v.invoiceId, p_reason: v.reason }),
   );
+}
+
+export async function uploadPaymentProof(_: ActionState, formData: FormData): Promise<ActionState> {
+  const invoiceId = z.uuid().safeParse(formData.get("invoiceId"));
+  if (!invoiceId.success) {
+    return { ok: false, error: "Something went wrong. Please refresh the page and try again." };
+  }
+
+  const file = formData.get("proof");
+  const upload = file instanceof File ? file : null;
+  const problem = checkProofFile(upload);
+  if (problem || !upload) return { ok: false, error: problem ?? "Choose an image first." };
+
+  const student = await requireRole("student");
+  const db = await createClient();
+  const bucket = db.storage.from(PROOF_BUCKET);
+  const path = proofPath(student.id, invoiceId.data, upload.type, crypto.randomUUID());
+
+  const { error: uploadError } = await bucket.upload(path, upload, { contentType: upload.type });
+  if (uploadError) {
+    console.error(uploadError);
+    return {
+      ok: false,
+      error:
+        "We could not upload the image. Please check that the invoice is still waiting for payment and try again.",
+    };
+  }
+
+  const { data: previous, error } = await db.rpc("attach_payment_proof", {
+    p_invoice_id: invoiceId.data,
+    p_path: path,
+  });
+  if (error) {
+    await bucket.remove([path]);
+    return { ok: false, error: friendlyError(error) };
+  }
+  if (previous) await bucket.remove([previous]);
+
+  revalidatePath("/", "layout");
+  return { ok: true };
 }

@@ -6,9 +6,11 @@ import { Panel } from "@/components/admin/section";
 import { pickTab, StatusTabs, type StatusTab } from "@/components/admin/status-tabs";
 import { StatusBadge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ImagePreview } from "@/components/ui/image-preview";
 import { PageHeader } from "@/components/ui/page-header";
 import { Table, Td, Th } from "@/components/ui/table";
 import { formatDate, formatRupiah } from "@/lib/format";
+import { proofUrl } from "@/lib/proof";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Invoices" };
@@ -31,7 +33,7 @@ export default async function InvoicesPage({
   let query = db
     .from("invoices")
     .select(
-      "id, hours, student_rate, status, payment_reference, void_reason, issued_at, paid_at, voided_at, enrollments(profiles(full_name), classes(name))",
+      "id, hours, student_rate, status, payment_reference, void_reason, issued_at, paid_at, voided_at, proof_uploaded_at, approver:profiles!invoices_paid_by_fkey(full_name), enrollments(profiles(full_name), classes(name))",
     )
     .order("issued_at", { ascending: false });
 
@@ -71,6 +73,7 @@ export default async function InvoicesPage({
               <Th>Rate</Th>
               <Th>Amount</Th>
               <Th>Status</Th>
+              <Th>Proof</Th>
               <Th>Dates</Th>
               <Th sticky />
             </tr>
@@ -79,6 +82,9 @@ export default async function InvoicesPage({
             {invoices.map((invoice) => {
               const amount = invoice.hours * invoice.student_rate;
               const studentName = invoice.enrollments.profiles.full_name;
+              const proofSrc = invoice.proof_uploaded_at
+                ? proofUrl(invoice.id, invoice.proof_uploaded_at)
+                : undefined;
               return (
                 <tr key={invoice.id}>
                   <Td className="font-semibold">{studentName}</Td>
@@ -89,9 +95,21 @@ export default async function InvoicesPage({
                   <Td>
                     <StatusBadge kind="invoice" status={invoice.status} />
                   </Td>
+                  <Td>
+                    {proofSrc ? (
+                      <ImagePreview
+                        src={proofSrc}
+                        title="Proof of payment"
+                        description={`${studentName} · ${formatRupiah(amount)}`}
+                      />
+                    ) : (
+                      <span className="text-muted text-xs">None</span>
+                    )}
+                  </Td>
                   <Td className="text-muted text-xs whitespace-nowrap">
                     <p>Issued {formatDate(invoice.issued_at)}</p>
                     {invoice.paid_at && <p>Paid {formatDate(invoice.paid_at)}</p>}
+                    {invoice.approver && <p>Approved by {invoice.approver.full_name}</p>}
                     {invoice.payment_reference && <p>Ref: {invoice.payment_reference}</p>}
                     {invoice.voided_at && <p>Cancelled {formatDate(invoice.voided_at)}</p>}
                     {invoice.void_reason && (
@@ -105,6 +123,7 @@ export default async function InvoicesPage({
                           invoiceId={invoice.id}
                           studentName={studentName}
                           amount={amount}
+                          proofSrc={proofSrc}
                         />
                       )}
                       {invoice.status !== "void" && (

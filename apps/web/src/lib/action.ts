@@ -11,7 +11,7 @@ type Db = SupabaseClient<Database>;
 
 const GENERIC_ERROR = "Something went wrong. Please try again.";
 
-function friendlyError(error: PostgrestError) {
+export function friendlyError(error: PostgrestError) {
   switch (error.code) {
     case "P0001":
       return error.message;
