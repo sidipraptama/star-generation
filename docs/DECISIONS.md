@@ -67,7 +67,7 @@ Each open decision from the brief: what I chose, how the system enforces it, and
 
 - A read-only calendar would only repaint the list the schedule page already had. The brief says cosmetic changes alone do not count, so the calendar carries status (entry missing, hours not covering a lesson) and actions (add, repeat, cancel a series).
 - A class profitability board and monthly payout statements are good candidates, but they report on data that already exists. The schedule is where the mistakes are created, so I fixed it at the source. They stay on the next-steps list.
-- A calendar library (FullCalendar and similar) is heavy, hard to theme to the design system and would not know our rules. The calendar is about 400 lines of server-rendered components; the only client code is the dialogs.
+- A calendar library (FullCalendar and similar) is heavy, hard to theme to the design system and would not know our rules. The calendar is under 800 lines including its tested date helpers, rendered on the server; the only client code is the dialogs.
 
 **Rules and trade-offs.**
 
