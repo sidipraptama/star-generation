@@ -3,11 +3,13 @@ import {
   addMonths,
   buildHref,
   countOccurrences,
+  fullDateLabel,
   isValidDate,
   layoutDay,
   parseCalendarParams,
   rangeTitle,
   shiftDate,
+  shiftMonth,
   visibleDays,
   visibleRange,
   weekStart,
@@ -47,6 +49,30 @@ describe("weeks and months", () => {
     expect(rangeTitle("week", "2026-11-17")).toBe("16–22 Nov 2026");
     expect(rangeTitle("week", "2026-11-30")).toBe("30 Nov – 6 Dec 2026");
     expect(rangeTitle("week", "2026-12-30")).toBe("28 Dec 2026 – 3 Jan 2027");
+  });
+});
+
+describe("shiftMonth", () => {
+  it("keeps the day of the month when it exists", () => {
+    expect(shiftMonth("2026-11-17", 1)).toBe("2026-12-17");
+    expect(shiftMonth("2026-11-17", -1)).toBe("2026-10-17");
+  });
+
+  it("uses the last day of a shorter month", () => {
+    expect(shiftMonth("2026-01-31", 1)).toBe("2026-02-28");
+    expect(shiftMonth("2028-01-31", 1)).toBe("2028-02-29");
+    expect(shiftMonth("2026-03-31", -1)).toBe("2026-02-28");
+  });
+
+  it("rolls over the year", () => {
+    expect(shiftMonth("2026-12-15", 1)).toBe("2027-01-15");
+    expect(shiftMonth("2026-01-15", -1)).toBe("2025-12-15");
+  });
+});
+
+describe("fullDateLabel", () => {
+  it("shows weekday, day, month and year", () => {
+    expect(fullDateLabel("2026-11-17")).toMatch(/^Tue,? 17 Nov 2026$/);
   });
 });
 

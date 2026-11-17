@@ -1,14 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import clsx from "clsx";
 import { Check, ChevronDown, Loader2, Search } from "lucide-react";
 import { controlClass } from "@/components/ui/field";
+import { Picker, usePopover } from "@/components/ui/picker";
 import { filterOptions, type Option, type OptionPage } from "@/lib/options";
 
 const STATIC_PAGE = 30;
 const SEARCH_DELAY_MS = 250;
 const MIN_POPOVER_WIDTH = 224;
+const POPOVER_HEIGHT = 300;
 
 type ComboboxProps = {
   name: string;
@@ -32,24 +34,6 @@ type ComboboxProps = {
   onValueChange?: (value: string) => void;
 };
 
-/** Anchors the popover under the trigger, or above it when there is no room below. */
-function placePopover(trigger: HTMLElement, popover: HTMLElement) {
-  const rect = trigger.getBoundingClientRect();
-  const width = Math.max(rect.width, MIN_POPOVER_WIDTH);
-  const left = Math.max(8, Math.min(rect.left, window.innerWidth - width - 8));
-  const below = window.innerHeight - rect.bottom;
-
-  popover.style.left = `${left}px`;
-  popover.style.width = `${width}px`;
-  if (below < 300 && rect.top > below) {
-    popover.style.top = "auto";
-    popover.style.bottom = `${window.innerHeight - rect.top + 4}px`;
-  } else {
-    popover.style.bottom = "auto";
-    popover.style.top = `${rect.bottom + 4}px`;
-  }
-}
-
 export function Combobox({
   name,
   id,
@@ -67,7 +51,6 @@ export function Combobox({
   onValueChange,
 }: ComboboxProps) {
   const listId = useId();
-  const [open, setOpen] = useState(false);
   const [value, setValue] = useState(defaultValue);
   const [selectedLabel, setSelectedLabel] = useState(
     () => options?.find((option) => option.value === defaultValue)?.label ?? defaultLabel ?? "",
@@ -79,9 +62,6 @@ export function Combobox({
   const [failed, setFailed] = useState(false);
   const [active, setActive] = useState(0);
 
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const popoverRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const valueInputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -89,6 +69,17 @@ export function Combobox({
   const requestRef = useRef(0);
   const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const loadMoreRef = useRef<() => void>(() => {});
+
+  const popover = usePopover({
+    minWidth: MIN_POPOVER_WIDTH,
+    height: POPOVER_HEIGHT,
+    onClose: () => {
+      clearTimeout(timerRef.current);
+      requestRef.current++;
+      setLoading(false);
+    },
+  });
+  const { open } = popover;
 
   const label = value === "" && emptyLabel !== undefined ? emptyLabel : selectedLabel;
   const showEmpty = emptyLabel !== undefined && query === "";
@@ -131,27 +122,12 @@ export function Combobox({
     };
   });
 
-  const close = useCallback((refocus: boolean) => {
-    popoverRef.current?.hidePopover();
-    clearTimeout(timerRef.current);
-    requestRef.current++;
-    setLoading(false);
-    setOpen(false);
-    if (refocus) triggerRef.current?.focus();
-  }, []);
-
   function openPopover() {
     if (disabled) return;
     setQuery("");
     setItems([]);
     setHasMore(false);
-    setOpen(true);
-    const trigger = triggerRef.current;
-    const popover = popoverRef.current;
-    if (trigger && popover) {
-      popover.showPopover();
-      placePopover(trigger, popover);
-    }
+    popover.show();
     inputRef.current?.focus();
     void load("", 0);
   }
@@ -160,7 +136,7 @@ export function Combobox({
     setValue(option.value);
     setSelectedLabel(option.label);
     onValueChange?.(option.value);
-    close(true);
+    popover.close(true);
     const input = valueInputRef.current;
     if (submitOnSelect && input) {
       input.value = option.value;
@@ -188,40 +164,11 @@ export function Combobox({
     } else if (event.key === "Escape") {
       event.preventDefault();
       event.stopPropagation();
-      close(true);
+      popover.close(true);
     } else if (event.key === "Tab") {
-      close(false);
+      popover.close(false);
     }
   }
-
-  function onTriggerKeyDown(event: React.KeyboardEvent<HTMLButtonElement>) {
-    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
-      event.preventDefault();
-      openPopover();
-    }
-  }
-
-  useEffect(() => {
-    if (!open) return;
-
-    const reposition = () => {
-      if (triggerRef.current && popoverRef.current) {
-        placePopover(triggerRef.current, popoverRef.current);
-      }
-    };
-    const onPointerDown = (event: PointerEvent) => {
-      if (!wrapperRef.current?.contains(event.target as Node)) close(false);
-    };
-
-    window.addEventListener("resize", reposition);
-    window.addEventListener("scroll", reposition, true);
-    document.addEventListener("pointerdown", onPointerDown);
-    return () => {
-      window.removeEventListener("resize", reposition);
-      window.removeEventListener("scroll", reposition, true);
-      document.removeEventListener("pointerdown", onPointerDown);
-    };
-  }, [open, close]);
 
   useEffect(() => {
     const sentinel = sentinelRef.current;
@@ -244,124 +191,102 @@ export function Combobox({
   }, [open, active, listId]);
 
   return (
-    <div ref={wrapperRef} className={clsx("relative", className)}>
-      <input
-        ref={valueInputRef}
-        name={name}
-        value={value}
-        required={required}
-        onChange={() => {}}
-        tabIndex={-1}
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-0"
-      />
-      <button
-        ref={triggerRef}
-        type="button"
-        id={id ?? name}
-        role="combobox"
-        aria-haspopup="listbox"
-        aria-expanded={open}
-        aria-controls={listId}
-        disabled={disabled}
-        onClick={() => (open ? close(true) : openPopover())}
-        onKeyDown={onTriggerKeyDown}
-        className={clsx(
-          controlClass,
-          "flex items-center justify-between gap-2 text-left",
-          !label && "text-muted",
-        )}
-      >
-        <span className="truncate">{label || placeholder}</span>
-        <ChevronDown className="text-muted size-4 shrink-0" aria-hidden />
-      </button>
+    <Picker
+      controller={popover}
+      name={name}
+      id={id}
+      value={value}
+      display={label}
+      placeholder={placeholder}
+      icon={ChevronDown}
+      popup="listbox"
+      popupId={listId}
+      onOpen={openPopover}
+      required={required}
+      disabled={disabled}
+      className={className}
+      valueInputRef={valueInputRef}
+    >
+      <div className="border-cloud relative border-b p-2">
+        <Search
+          className="text-muted pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2"
+          aria-hidden
+        />
+        <input
+          ref={inputRef}
+          type="text"
+          role="combobox"
+          aria-label="Search"
+          aria-expanded={open}
+          aria-controls={listId}
+          aria-activedescendant={rows[active] ? optionId(active) : undefined}
+          aria-autocomplete="list"
+          autoComplete="off"
+          value={query}
+          placeholder={searchPlaceholder}
+          onChange={(event) => onSearch(event.target.value)}
+          onKeyDown={onSearchKeyDown}
+          className={clsx(controlClass, "pl-8")}
+        />
+      </div>
 
-      <div
-        ref={popoverRef}
-        popover="manual"
-        className="rounded-card border-cloud text-navy inset-auto m-0 overflow-hidden border bg-white p-0 shadow-lg"
-      >
-        <div className="border-cloud relative border-b p-2">
-          <Search
-            className="text-muted pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2"
-            aria-hidden
-          />
-          <input
-            ref={inputRef}
-            type="text"
-            role="combobox"
-            aria-label="Search"
-            aria-expanded={open}
-            aria-controls={listId}
-            aria-activedescendant={rows[active] ? optionId(active) : undefined}
-            aria-autocomplete="list"
-            autoComplete="off"
-            value={query}
-            placeholder={searchPlaceholder}
-            onChange={(event) => onSearch(event.target.value)}
-            onKeyDown={onSearchKeyDown}
-            className={clsx(controlClass, "pl-8")}
-          />
-        </div>
-
-        <div ref={scrollRef} className="max-h-60 overflow-y-auto">
-          <ul id={listId} role="listbox" aria-label={placeholder} className="py-1">
-            {rows.map((option, index) => (
-              <li
-                key={option.value === "" ? "__empty" : option.value}
-                id={optionId(index)}
-                role="option"
-                aria-selected={option.value === value}
-                onMouseDown={(event) => event.preventDefault()}
-                onMouseMove={() => setActive(index)}
-                onClick={() => choose(option)}
-                className={clsx(
-                  "flex cursor-pointer items-center justify-between gap-2 px-3 py-2 text-sm",
-                  index === active && "bg-navy/5",
-                )}
-              >
-                <span className="min-w-0">
-                  <span
-                    className={clsx(
-                      "block truncate",
-                      option.value === value && "font-semibold",
-                      option.value === "" && "text-muted",
-                    )}
-                  >
-                    {option.label}
-                  </span>
-                  {option.hint && (
-                    <span className="text-muted block truncate text-xs">{option.hint}</span>
+      <div ref={scrollRef} className="max-h-60 overflow-y-auto">
+        <ul id={listId} role="listbox" aria-label={placeholder} className="py-1">
+          {rows.map((option, index) => (
+            <li
+              key={option.value === "" ? "__empty" : option.value}
+              id={optionId(index)}
+              role="option"
+              aria-selected={option.value === value}
+              onMouseDown={(event) => event.preventDefault()}
+              onMouseMove={() => setActive(index)}
+              onClick={() => choose(option)}
+              className={clsx(
+                "flex cursor-pointer items-center justify-between gap-2 px-3 py-2 text-sm",
+                index === active && "bg-navy/5",
+              )}
+            >
+              <span className="min-w-0">
+                <span
+                  className={clsx(
+                    "block truncate",
+                    option.value === value && "font-semibold",
+                    option.value === "" && "text-muted",
                   )}
-                </span>
-                {option.value === value && <Check className="size-4 shrink-0" aria-hidden />}
-              </li>
-            ))}
-          </ul>
-          {hasMore && <div ref={sentinelRef} aria-hidden className="h-1" />}
-          <div role="status" className="text-muted px-3 py-2 text-sm empty:hidden">
-            {loading && (
-              <span className="flex items-center gap-2">
-                <Loader2 className="size-4 animate-spin" aria-hidden />
-                Loading…
-              </span>
-            )}
-            {!loading && failed && (
-              <span>
-                Could not load.{" "}
-                <button
-                  type="button"
-                  className="text-navy font-semibold underline"
-                  onClick={() => void load(query, items.length)}
                 >
-                  Try again
-                </button>
+                  {option.label}
+                </span>
+                {option.hint && (
+                  <span className="text-muted block truncate text-xs">{option.hint}</span>
+                )}
               </span>
-            )}
-            {!loading && !failed && rows.length === 0 && "No results"}
-          </div>
+              {option.value === value && <Check className="size-4 shrink-0" aria-hidden />}
+            </li>
+          ))}
+        </ul>
+        {hasMore && <div ref={sentinelRef} aria-hidden className="h-1" />}
+        <div role="status" className="text-muted px-3 py-2 text-sm empty:hidden">
+          {loading && (
+            <span className="flex items-center gap-2">
+              <Loader2 className="size-4 animate-spin" aria-hidden />
+              Loading…
+            </span>
+          )}
+          {!loading && failed && (
+            <span>
+              Could not load.{" "}
+              <button
+                type="button"
+                className="text-navy font-semibold underline"
+                onClick={() => void load(query, items.length)}
+              >
+                Try again
+              </button>
+            </span>
+          )}
+          {!loading && !failed && rows.length === 0 && "No results"}
         </div>
       </div>
-    </div>
+    </Picker>
   );
 }

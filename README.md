@@ -74,7 +74,7 @@ A good walkthrough: sign in as Budi, write entries for the two recent lessons, s
 | Command                       | What it does                                                          |
 | ----------------------------- | --------------------------------------------------------------------- |
 | `pnpm db:test`                | pgTAP tests for business rules and row level security (in Docker)     |
-| `pnpm test`                   | Vitest unit tests (formatting, WIB handling, calendar, options paging, number fields)        |
+| `pnpm test`                   | Vitest unit tests (formatting, WIB handling, calendar, options paging, number, date and time fields)        |
 | `pnpm typecheck` / `pnpm lint` | TypeScript and ESLint                                                |
 | `pnpm up` / `pnpm down`       | Shortcuts for `docker compose up --build` and `docker compose down`   |
 | `pnpm db:start`               | Start only the backend services in the background                     |

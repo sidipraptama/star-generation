@@ -3,7 +3,9 @@
 import { useState } from "react";
 import clsx from "clsx";
 import { Combobox } from "@/components/ui/combobox";
-import { Field, Input } from "@/components/ui/field";
+import { DatePicker } from "@/components/ui/date-picker";
+import { Field } from "@/components/ui/field";
+import { TimePicker } from "@/components/ui/time-picker";
 import { addDays, countOccurrences, isValidDate, isoWeekday } from "@/lib/calendar";
 
 const WEEKDAYS = [
@@ -82,23 +84,21 @@ export function RecurringFields({ classes, defaultDate, minDate }: RecurringFiel
 
       <div className="grid grid-cols-2 gap-3">
         <Field label="First lesson on" htmlFor="firstDate">
-          <Input
+          <DatePicker
             name="firstDate"
-            type="date"
             min={minDate}
             required
-            value={firstDate}
-            onChange={(event) => setFirstDate(event.target.value)}
+            defaultValue={defaultDate}
+            onValueChange={setFirstDate}
           />
         </Field>
         <Field label="Repeat until" htmlFor="untilDate">
-          <Input
+          <DatePicker
             name="untilDate"
-            type="date"
             min={firstDate}
             required
-            value={untilDate}
-            onChange={(event) => setUntilDate(event.target.value)}
+            defaultValue={untilDate}
+            onValueChange={setUntilDate}
           />
         </Field>
       </div>
@@ -131,10 +131,10 @@ export function RecurringFields({ classes, defaultDate, minDate }: RecurringFiel
 
       <div className="grid grid-cols-2 gap-3">
         <Field label="Starts at" htmlFor="startTime">
-          <Input name="startTime" type="time" required defaultValue="16:00" />
+          <TimePicker name="startTime" required defaultValue="16:00" />
         </Field>
         <Field label="Ends at" htmlFor="endTime">
-          <Input name="endTime" type="time" required defaultValue="17:30" />
+          <TimePicker name="endTime" required defaultValue="17:30" />
         </Field>
       </div>
 

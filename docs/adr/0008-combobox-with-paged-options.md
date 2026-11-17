@@ -19,5 +19,5 @@ A native `<select>` cannot be searched, and it needs every option up front. Tuto
 ## Consequences
 
 - One look and behaviour for every dropdown, and lists of any size stay cheap.
-- Date, time and number inputs remain native on purpose: the browser pickers are better than anything we would build.
+- The panel and trigger are shared with the date, time and number fields ([ADR 0009](0009-date-time-and-number-fields.md)).
 - The Popover API needs a browser from 2024 or later.

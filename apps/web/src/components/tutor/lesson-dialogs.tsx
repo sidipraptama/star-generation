@@ -1,7 +1,9 @@
 import { Ban, Plus } from "lucide-react";
 import { cancelLesson, scheduleLesson } from "@/app/tutor/actions";
+import { DatePicker } from "@/components/ui/date-picker";
 import { DialogForm } from "@/components/ui/dialog-form";
-import { Field, Input, Textarea } from "@/components/ui/field";
+import { Field, Textarea } from "@/components/ui/field";
+import { TimePicker } from "@/components/ui/time-picker";
 import { todayInWib } from "@/lib/time";
 
 export function AddLessonDialog({ classId }: { classId: string }) {
@@ -17,14 +19,14 @@ export function AddLessonDialog({ classId }: { classId: string }) {
     >
       <input type="hidden" name="classId" value={classId} />
       <Field label="Date" htmlFor="date">
-        <Input name="date" type="date" min={todayInWib()} required />
+        <DatePicker name="date" min={todayInWib()} required />
       </Field>
       <div className="grid grid-cols-2 gap-3">
         <Field label="Starts at" htmlFor="startTime">
-          <Input name="startTime" type="time" required />
+          <TimePicker name="startTime" required />
         </Field>
         <Field label="Ends at" htmlFor="endTime">
-          <Input name="endTime" type="time" required />
+          <TimePicker name="endTime" required />
         </Field>
       </div>
       <p className="text-muted text-xs">

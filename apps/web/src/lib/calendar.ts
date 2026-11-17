@@ -35,6 +35,15 @@ export function addMonths(date: string, months: number) {
   return `${Math.floor(index / 12)}-${String((index % 12) + 1).padStart(2, "0")}-01`;
 }
 
+/** Same day of the month in another month, or its last day when that month is shorter. */
+export function shiftMonth(date: string, months: number) {
+  const first = addMonths(date, months);
+  const [year, month] = first.split("-").map(Number);
+  const lastDay = new Date(Date.UTC(year, month, 0)).getUTCDate();
+  const day = Math.min(Number(date.slice(8, 10)), lastDay);
+  return `${first.slice(0, 8)}${String(day).padStart(2, "0")}`;
+}
+
 export function parseCalendarParams(params: { view?: string; date?: string }, today: string) {
   return {
     view: (params.view === "month" ? "month" : "week") as CalendarView,
@@ -96,6 +105,15 @@ export function rangeTitle(view: CalendarView, date: string) {
   return `${dayMonthYear.format(toUtc(start))} – ${dayMonthYear.format(toUtc(end))}`;
 }
 
+const fullDate = new Intl.DateTimeFormat("en-GB", {
+  timeZone: "UTC",
+  weekday: "short",
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+});
+
+export const fullDateLabel = (date: string) => fullDate.format(toUtc(date));
 export const weekdayLabel = (date: string) => weekday.format(toUtc(date));
 export const dayOfMonth = (date: string) => toUtc(date).getUTCDate();
 export const longDayLabel = (date: string) => longDay.format(toUtc(date));

@@ -1,8 +1,10 @@
 import { scheduleLesson, scheduleLessonsWeekly } from "@/app/tutor/actions";
 import { RecurringFields } from "@/components/tutor/recurring-fields";
 import { Combobox } from "@/components/ui/combobox";
-import { Field, Input } from "@/components/ui/field";
+import { DatePicker } from "@/components/ui/date-picker";
+import { Field } from "@/components/ui/field";
 import { RouteDialogForm } from "@/components/ui/route-dialog";
+import { TimePicker } from "@/components/ui/time-picker";
 import { todayInWib } from "@/lib/time";
 
 type ClassOption = { id: string; name: string };
@@ -36,14 +38,14 @@ export function AddLessonRouteDialog({ classes, initial, closeHref }: AddLessonR
         </Field>
       )}
       <Field label="Date" htmlFor="date">
-        <Input name="date" type="date" min={todayInWib()} required defaultValue={initial.date} />
+        <DatePicker name="date" min={todayInWib()} required defaultValue={initial.date} />
       </Field>
       <div className="grid grid-cols-2 gap-3">
         <Field label="Starts at" htmlFor="startTime">
-          <Input name="startTime" type="time" required defaultValue={initial.start} />
+          <TimePicker name="startTime" required defaultValue={initial.start} />
         </Field>
         <Field label="Ends at" htmlFor="endTime">
-          <Input name="endTime" type="time" required defaultValue={initial.end} />
+          <TimePicker name="endTime" required defaultValue={initial.end} />
         </Field>
       </div>
       <p className="text-muted text-xs">
