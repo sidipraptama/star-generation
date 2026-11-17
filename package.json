@@ -11,11 +11,12 @@
     "lint": "pnpm --filter web lint",
     "typecheck": "pnpm --filter web typecheck",
     "test": "pnpm --filter web test",
-    "db:start": "supabase start",
-    "db:stop": "supabase stop",
-    "db:reset": "supabase db reset",
-    "db:test": "supabase test db",
-    "db:types": "supabase gen types typescript --local > apps/web/src/lib/database.types.ts",
-    "db:demo": "docker exec -i supabase_db_star-generation psql -U postgres -d postgres -v ON_ERROR_STOP=1 < supabase/demo.sql"
+    "up": "docker compose up --build",
+    "down": "docker compose down",
+    "db:start": "docker compose up -d --wait db auth migrate rest gateway",
+    "db:reset": "docker compose down -v && pnpm db:start",
+    "db:test": "docker compose run --rm test",
+    "db:demo": "docker compose exec -T db psql -U postgres -d postgres -v ON_ERROR_STOP=1 < supabase/demo.sql",
+    "db:types": "supabase gen types typescript --db-url postgresql://postgres:postgres@127.0.0.1:54322/postgres > apps/web/src/lib/database.types.ts"
   }
 }

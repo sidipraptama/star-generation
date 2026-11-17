@@ -1,0 +1,124 @@
+name: star-generation
+
+# Local stack only. The JWT secret and anon key below are public demo values; override all three
+# variables (POSTGRES_PASSWORD, JWT_SECRET, ANON_KEY) for anything that is not your own machine.
+
+x-postgres-password: &postgres-password ${POSTGRES_PASSWORD:-postgres}
+x-jwt-secret: &jwt-secret ${JWT_SECRET:-star-generation-local-jwt-secret-do-not-use-in-production}
+x-anon-key: &anon-key ${ANON_KEY:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN0YXItZ2VuZXJhdGlvbi1sb2NhbCIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjo0MTAyNDQ0ODAwfQ.ARuedOE0-kuhEE-fkxnolshtptNvWgKybrAJ06hU_48}
+
+services:
+  db:
+    image: public.ecr.aws/supabase/postgres:17.6.1.043
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: *postgres-password
+    ports:
+      - "54322:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./docker/db/roles.sql:/docker-entrypoint-initdb.d/init-scripts/99-roles.sql:ro
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  auth:
+    image: public.ecr.aws/supabase/gotrue:v2.182.1
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      GOTRUE_API_HOST: 0.0.0.0
+      GOTRUE_API_PORT: "9999"
+      API_EXTERNAL_URL: http://localhost:54321
+      GOTRUE_SITE_URL: http://localhost:3000
+      GOTRUE_DB_DRIVER: postgres
+      GOTRUE_DB_DATABASE_URL: postgres://supabase_auth_admin:${POSTGRES_PASSWORD:-postgres}@db:5432/postgres
+      GOTRUE_DISABLE_SIGNUP: "true"
+      GOTRUE_EXTERNAL_EMAIL_ENABLED: "true"
+      GOTRUE_MAILER_AUTOCONFIRM: "true"
+      GOTRUE_JWT_SECRET: *jwt-secret
+      GOTRUE_JWT_EXP: "3600"
+      GOTRUE_JWT_AUD: authenticated
+      GOTRUE_JWT_DEFAULT_GROUP_NAME: authenticated
+      GOTRUE_JWT_ADMIN_ROLES: service_role
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9999/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  # Applies supabase/migrations once and loads supabase/seed.sql on an empty database. It has to run
+  # after auth, because the seed inserts into tables that GoTrue creates.
+  migrate:
+    image: public.ecr.aws/supabase/postgres:17.6.1.043
+    depends_on:
+      auth:
+        condition: service_healthy
+    restart: "no"
+    environment:
+      POSTGRES_PASSWORD: *postgres-password
+    entrypoint: ["bash", "/migrate.sh"]
+    volumes:
+      - ./docker/migrate.sh:/migrate.sh:ro
+      - ./supabase:/supabase:ro
+
+  rest:
+    image: public.ecr.aws/supabase/postgrest:v13.0.7
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      PGRST_DB_URI: postgres://authenticator:${POSTGRES_PASSWORD:-postgres}@db:5432/postgres
+      PGRST_DB_SCHEMAS: public
+      PGRST_DB_ANON_ROLE: anon
+      PGRST_DB_USE_LEGACY_GUCS: "false"
+      PGRST_JWT_SECRET: *jwt-secret
+    command: ["postgrest"]
+
+  # One public URL for the API, like the Supabase CLI: /auth/v1 and /rest/v1.
+  gateway:
+    image: nginx:1.27-alpine
+    depends_on:
+      - auth
+      - rest
+    ports:
+      - "54321:8000"
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    depends_on:
+      - gateway
+    environment:
+      SUPABASE_URL: http://gateway:8000
+      SUPABASE_ANON_KEY: *anon-key
+    ports:
+      - "3000:3000"
+
+  # docker compose run --rm test
+  test:
+    profiles: ["test"]
+    image: public.ecr.aws/supabase/pg_prove:3.36
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      PGHOST: db
+      PGUSER: postgres
+      PGDATABASE: postgres
+      PGPASSWORD: *postgres-password
+    entrypoint:
+      - sh
+      - -c
+      - psql -q -c 'create extension if not exists pgtap with schema extensions' && pg_prove /tests/*.test.sql
+    volumes:
+      - ./supabase/tests/database:/tests:ro
+
+volumes:
+  db-data:

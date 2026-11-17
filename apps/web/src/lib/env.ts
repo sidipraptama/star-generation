@@ -1,9 +1,10 @@
 import { z } from "zod";
 
-// Supabase CLI prints these fixed values for every local stack; they are not secrets.
+// Public demo key of the docker-compose stack (see docker-compose.yml); not a secret.
 const localDefaults = {
   SUPABASE_URL: "http://127.0.0.1:54321",
-  SUPABASE_ANON_KEY: "sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH",
+  SUPABASE_ANON_KEY:
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN0YXItZ2VuZXJhdGlvbi1sb2NhbCIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjo0MTAyNDQ0ODAwfQ.ARuedOE0-kuhEE-fkxnolshtptNvWgKybrAJ06hU_48",
 };
 
 const schema = z.object({
