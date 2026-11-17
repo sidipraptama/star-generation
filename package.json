@@ -15,6 +15,7 @@
     "db:stop": "supabase stop",
     "db:reset": "supabase db reset",
     "db:test": "supabase test db",
-    "db:types": "supabase gen types typescript --local > apps/web/src/lib/database.types.ts"
+    "db:types": "supabase gen types typescript --local > apps/web/src/lib/database.types.ts",
+    "db:demo": "docker exec -i supabase_db_star-generation psql -U postgres -d postgres -v ON_ERROR_STOP=1 < supabase/demo.sql"
   }
 }

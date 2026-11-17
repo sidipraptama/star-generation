@@ -258,7 +258,7 @@ export type Database = {
       }
       invoices: {
         Row: {
-          amount: number | null
+          amount: number
           enrollment_id: string
           hours: number
           id: string
@@ -273,7 +273,7 @@ export type Database = {
           voided_by: string | null
         }
         Insert: {
-          amount?: number | null
+          amount?: number
           enrollment_id: string
           hours: number
           id?: string
@@ -288,7 +288,7 @@ export type Database = {
           voided_by?: string | null
         }
         Update: {
-          amount?: number | null
+          amount?: number
           enrollment_id?: string
           hours?: number
           id?: string

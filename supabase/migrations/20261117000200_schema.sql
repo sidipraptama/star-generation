@@ -42,7 +42,7 @@ create table public.invoices (
   enrollment_id uuid not null references public.enrollments (id),
   hours integer not null check (hours between 1 and 200),
   student_rate integer not null check (student_rate between 1 and 10000000),
-  amount integer generated always as (hours * student_rate) stored,
+  amount integer generated always as (hours * student_rate) stored not null,
   status public.invoice_status not null default 'unpaid',
   payment_reference text,
   issued_at timestamptz not null default now(),
